@@ -6,17 +6,17 @@
 
 ### MacOS
 ```bash
-cd backend
+cd diggidog/backend
 python3 -m venv venv
 source venv/bin/activate
-pip install django djangorestframework django-cors-headers
+pip3 install django djangorestframework django-cors-headers
 python3 manage.py migrate
 python3 manage.py runserver
 ```
 
 ### Windows
 ```bash
-cd backend
+cd diggidog/backend
 python -m venv venv
 venv\Scripts\activate
 pip install django djangorestframework django-cors-headers
@@ -35,4 +35,18 @@ Example API endpoint:
 ```
 http://127.0.0.1:8000/api/hello/
 ```
+
+
+## How to run the frontend
+```bash
+cd diggidog/frontend
+npm run dev 
+
+Open the localhost link
+```
+
+
+
+
+
 
