@@ -3,10 +3,22 @@
 
 ## How to run the Django Server
 
+
+### MacOS
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install django djangorestframework django-cors-headers
+python3 manage.py migrate
+python3 manage.py runserver
+```
+
+### Windows
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+venv\Scripts\activate
 pip install django djangorestframework django-cors-headers
 python manage.py migrate
 python manage.py runserver
