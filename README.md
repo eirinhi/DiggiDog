@@ -40,10 +40,10 @@ http://127.0.0.1:8000/api/hello/
 ## How to run the frontend
 ```bash
 cd diggidog/frontend
+npm install
 npm run dev 
-
-Open the localhost link
 ```
+Open the localhost link
 
 
 
