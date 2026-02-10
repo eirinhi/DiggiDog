@@ -16,6 +16,22 @@ export default function CreateCompetitionForm(){
         setError('');
         setSuccess('');
 
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const now = new Date();
+
+        if (start < now) {
+            setError('Start date can not be in the past.');
+            setLoading(false);
+            return;
+        }
+
+        if (end <= start) {
+            setError('End date must be after start date.');
+            setLoading(false);
+            return;
+        }
+
 
         try {
             const reponse = await fetch('http://localhost:8000/api/create_comp/', {
