@@ -56,4 +56,4 @@ def login(request):
             "is_admin": user.is_admin,
             "data_joined": user.date_joined.timestamp()
         }
-    }, status=202)
+    }, status=200)
