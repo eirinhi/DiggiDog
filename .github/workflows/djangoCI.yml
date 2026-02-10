@@ -2,20 +2,21 @@ name: Django CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-    runs-on: [self-hosted, ntnu-runners]
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: ["3.11"]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -31,4 +32,3 @@ jobs:
         run: |
           cd backend
           python manage.py test -v 2
-
