@@ -1,1 +1,55 @@
 
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #519ABA;
+  font-family: Arial, sans-serif;
+  background-image: url("./assets/dog.png");
+           /* ✅ one dog size (change 420px) */
+  background-repeat: no-repeat;      /* ✅ stops tiling */
+  background-size: cover;          /* ✅ fills fullscreen nicely */
+  background-position: center 50% ; /* ✅ keeps dogs near bottom */       /* ✅ centers it */
+}
+
+.card {
+  width: 60%;
+  max-width: 420px;
+  background: rgb(255, 255, 255);
+  border: 1px solid #2c4472;
+  border-radius: 12px;
+  padding: 22px;
+  margin-top: -300px;
+  
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+
+}
+
+
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d6dbe6;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #2b5cff;
+  color: white;
+  border-color: #2b5cff;
+}
