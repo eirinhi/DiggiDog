@@ -9,7 +9,7 @@ function App() {
     <>
       <p>Hello welcome to my diggidog</p>
 
-      <CreateCompetitionForm/>
+      <App/>
     </>
   )
 }
