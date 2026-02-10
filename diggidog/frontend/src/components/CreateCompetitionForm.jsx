@@ -1,4 +1,5 @@
 import{useState} from 'react';
+import './CreateCompetitionForm.css'
 
 export default function CreateCompetitionForm(){
     const [name, setName] = useState('');
@@ -28,6 +29,13 @@ export default function CreateCompetitionForm(){
 
         if (end <= start) {
             setError('End date must be after start date.');
+            setLoading(false);
+            return;
+        }
+
+        const maxDuration = 14 * 24 * 60 * 60 * 1000;
+        if (end-start > maxDuration) {
+            setError('The competition can not last for longer than 2 weeks.')
             setLoading(false);
             return;
         }
@@ -68,66 +76,68 @@ export default function CreateCompetitionForm(){
     };
 
     return (
-        <div className="form-container">
-            <h2>Opprett konkurranse</h2>
-            {error && <div className="error">{error}</div>}
-            {success && <div className="success">{success}</div>}
+        <div className="page">
+            <div className="card">
+                <h2 className="title">Opprett konkurranse</h2>
+                {error && <div className="error">{error}</div>}
+                {success && <div className="success">{success}</div>}
 
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Navn på konkurranse *</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>Navn på konkurranse *</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Beskrivelse</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows="4"
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Beskrivelse</label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows="4"
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Startdato og tid *</label>
-                    <input
-                        type="datetime-local"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        required
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Startdato og tid *</label>
+                        <input
+                            type="datetime-local"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Sluttdato og tid *</label>
-                    <input
-                        type="datetime-local"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        required
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Sluttdato og tid *</label>
+                        <input
+                            type="datetime-local"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                <div className="form-group">
-                    <label>Maks antall deltakere *</label>
-                    <input
-                        type="number"
-                        value={maxParticipants}
-                        onChange={(e) => setMaxParticipants(e.target.value)}
-                        min="1"
-                        required
-                    />
-                </div>
+                    <div className="form-group">
+                        <label>Maks antall deltakere *</label>
+                        <input
+                            type="number"
+                            value={maxParticipants}
+                            onChange={(e) => setMaxParticipants(e.target.value)}
+                            min="1"
+                            required
+                        />
+                    </div>
 
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Oppretter...' : 'Opprett konkurranse'}
-                </button>
-            </form>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Oppretter...' : 'Opprett konkurranse'}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
