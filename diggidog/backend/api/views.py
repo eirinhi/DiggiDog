@@ -116,6 +116,4 @@ def get_competitions(request):
             "max_participants": competition.max_participants,
         })
 
-    return Response({
-        "competitions": comps
-    }, status = 200)
+    return Response(comps, status = 200)

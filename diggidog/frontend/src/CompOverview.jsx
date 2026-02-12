@@ -27,16 +27,7 @@ export default function CompOverview() {
           throw new Error(`HTTP ${res.status}: ${text}`);
         }
 
-        const data = await res.json();
-
-        // make sure competitions is ALWAYS an array
-        const comps = Array.isArray(data)
-          ? data
-          : Array.isArray(data.results)
-          ? data.results
-          : Array.isArray(data.competitions)
-          ? data.competitions
-          : [];
+        const comps = await res.json();
 
         setCompetitions(comps);
         setError(null);
