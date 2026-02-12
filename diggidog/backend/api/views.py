@@ -27,6 +27,7 @@ def register(request):
         "user": {
             "id": user.id,
             "username": user.username,
+            "name": user.name,
             "bio": user.bio,
             "is_admin": user.is_admin,
             "data_joined": user.date_joined.timestamp()
@@ -53,6 +54,7 @@ def login(request):
         "user": {
             "id": user.id,
             "username": user.username,
+            "name": user.name,
             "bio": user.bio,
             "is_admin": user.is_admin,
             "data_joined": user.date_joined.timestamp()
