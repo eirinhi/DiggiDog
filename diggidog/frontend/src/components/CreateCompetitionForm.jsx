@@ -1,4 +1,4 @@
-import{useState} from 'react';
+import{ useState } from 'react';
 import './CreateCompetitionForm.css'
 
 export default function CreateCompetitionForm(){
@@ -22,7 +22,7 @@ export default function CreateCompetitionForm(){
         const now = new Date();
 
         if (start < now) {
-            setError('Start date can not be in the past.');
+            setError('Start date cannot be in the past.');
             setLoading(false);
             return;
         }
@@ -35,21 +35,21 @@ export default function CreateCompetitionForm(){
 
         const maxDuration = 14 * 24 * 60 * 60 * 1000;
         if (end-start > maxDuration) {
-            setError('The competition can not last for longer than 2 weeks.')
+            setError('The competition cannot last for longer than 2 weeks.')
             setLoading(false);
             return;
         }
 
         const maxFuture = 61 * 24 * 60 * 60 *1000;
         if (start-now > maxFuture) {
-            setError('The competition can not be more than 2 months in the future.')
+            setError('The competition cannot be more than 2 months in the future.')
             setLoading(false);
             return;
         }
 
 
         try {
-            const reponse = await fetch('http://localhost:8000/api/create_comp/', {
+            const response = await fetch('http://localhost:8000/api/create_comp/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export default function CreateCompetitionForm(){
                 }),
             });
 
-            if (!reponse.ok) {
+            if (!response.ok) {
                 const data = await response.json();
                 throw new Error(data.error || 'Something went wrong');
             }
@@ -78,20 +78,20 @@ export default function CreateCompetitionForm(){
         } catch (err) {
             setError(err.message);
         } finally {
-            setLoading (false);
+            setLoading(false);
         }
     };
 
     return (
         <div className="page">
             <div className="card">
-                <h2 className="title">Opprett konkurranse</h2>
+                <h2 className="title">Create Competition</h2>
                 {error && <div className="error">{error}</div>}
                 {success && <div className="success">{success}</div>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Navn på konkurranse *</label>
+                        <label>Competition Name *</label>
                         <input
                             type="text"
                             value={name}
@@ -101,7 +101,7 @@ export default function CreateCompetitionForm(){
                     </div>
 
                     <div className="form-group">
-                        <label>Beskrivelse</label>
+                        <label>Description</label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -110,7 +110,7 @@ export default function CreateCompetitionForm(){
                     </div>
 
                     <div className="form-group">
-                        <label>Startdato og tid *</label>
+                        <label>Start Date & Time *</label>
                         <input
                             type="datetime-local"
                             value={startDate}
@@ -120,7 +120,7 @@ export default function CreateCompetitionForm(){
                     </div>
 
                     <div className="form-group">
-                        <label>Sluttdato og tid *</label>
+                        <label>End Date & Time *</label>
                         <input
                             type="datetime-local"
                             value={endDate}
@@ -130,7 +130,7 @@ export default function CreateCompetitionForm(){
                     </div>
 
                     <div className="form-group">
-                        <label>Maks antall deltakere *</label>
+                        <label>Maximum Participants *</label>
                         <input
                             type="number"
                             value={maxParticipants}
@@ -141,7 +141,7 @@ export default function CreateCompetitionForm(){
                     </div>
 
                     <button type="submit" disabled={loading}>
-                        {loading ? 'Oppretter...' : 'Opprett konkurranse'}
+                        {loading ? 'Creating...' : 'Create Competition'}
                     </button>
                 </form>
             </div>
