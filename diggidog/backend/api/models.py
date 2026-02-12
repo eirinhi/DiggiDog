@@ -29,6 +29,17 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.username
 
+class Competition(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    max_participants = models.PositiveIntegerField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 

@@ -1,5 +1,8 @@
+
 import { useEffect, useState } from "react";
 import "./App.css";
+import CreateCompetitionForm from './components/CreateCompetitionForm';
+
 
 const API_BASE = "http://127.0.0.1:8000/api";
 
@@ -143,6 +146,7 @@ export default function App() {
               autoComplete={mode === "login" ? "current-password" : "new-password"}
             />
           </div>
+
 
           {error && <p style={{ color: "red" }}>{error}</p>}
           {message && <p style={{ color: "green" }}>{message}</p>}
