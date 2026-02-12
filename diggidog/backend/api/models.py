@@ -5,11 +5,11 @@ import django.utils.timezone
 
 # Create your models here.
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None):
+    def create_user(self, username, name, password=None):
         if not username:
             raise ValueError("Username is required")
 
-        user = self.model(username=username)
+        user = self.model(username=username, name=name)
         user.set_password(password)
         user.save(using=self._db)
         return user
