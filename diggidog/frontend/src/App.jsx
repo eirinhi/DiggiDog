@@ -7,14 +7,20 @@ import CreateCompetitionForm from './components/CreateCompetitionForm';
 const API_BASE = "http://127.0.0.1:8000/api";
 
 export default function App() {
-  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [mode, setMode] = useState("login"); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
+
 
   // husk innlogging (demo) ved refresh
   useEffect(() => {
@@ -29,6 +35,9 @@ export default function App() {
       setError("Please fill in both Username and Password.");
       return;
     }
+   
+
+
 
     setError("");
     setMessage("");
@@ -48,7 +57,7 @@ export default function App() {
         return;
       }
 
-      // DEMO: lagrer bare user
+  
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setLoggedIn(true);
@@ -66,6 +75,11 @@ export default function App() {
       setError("Please fill in both Username and Password.");
       return;
     }
+    if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+         return;
+}
+
 
     setError("");
     setMessage("");
@@ -75,7 +89,7 @@ export default function App() {
       const res = await fetch(`${API_BASE}/register/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, name}),
       });
 
       const data = await res.json();
@@ -89,6 +103,7 @@ export default function App() {
       setMode("login");
       setPassword("");
       setMessage("User created! Please log in.");
+
     } catch (err) {
       setError("Could not reach server. Is Django running?");
     } finally {
@@ -130,6 +145,13 @@ export default function App() {
 
         <form onSubmit={mode === "login" ? handleLogin : handleSignup}>
           <div>
+
+            { mode === "signup" && (<input
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{ display: "block", marginBottom: 8 }}
+            />)}
             <input
               placeholder="Username"
               value={username}
@@ -137,14 +159,49 @@ export default function App() {
               style={{ display: "block", marginBottom: 8 }}
               autoComplete="username"
             />
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
             <input
               placeholder="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ display: "block", marginBottom: 8 }}
               autoComplete={mode === "login" ? "current-password" : "new-password"}
+
             />
+
+              <button
+              type="button"
+              className="btnSmall"
+              onClick={() => setShowPassword((v) => !v)}
+              >
+              {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+
+
+
+
+             <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
+             { mode === "signup" && (<input
+              placeholder="Confirm Password"
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              style={{ display: "block", marginBottom: 8 }}
+              autoComplete="new-password"
+            />
+          
+              )}
+
+             {mode ==="signup" && (<button
+              type="button"
+              className="btnSmall"
+              onClick={() => setShowConfirmPassword((v) => !v)}
+              >
+              {showConfirmPassword ? "Hide" : "Show"}
+              </button>)}
+            </div>
           </div>
 
 

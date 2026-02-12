@@ -5,11 +5,11 @@ import django.utils.timezone
 
 # Create your models here.
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None):
+    def create_user(self, username, name, password=None):
         if not username:
             raise ValueError("Username is required")
 
-        user = self.model(username=username)
+        user = self.model(username=username, name=name)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -17,6 +17,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser): 
     id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
     username = models.CharField(max_length=20, unique=True, verbose_name='username')
+    name = models.CharField(max_length=50, blank=True, verbose_name='name')
     bio = models.TextField(blank=True)
     is_admin = models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='admin status')
     date_joined = models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')
