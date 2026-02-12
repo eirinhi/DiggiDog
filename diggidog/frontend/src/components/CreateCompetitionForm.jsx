@@ -136,6 +136,7 @@ export default function CreateCompetitionForm(){
                             value={maxParticipants}
                             onChange={(e) => setMaxParticipants(e.target.value)}
                             min="1"
+                            max="20"
                             required
                         />
                     </div>

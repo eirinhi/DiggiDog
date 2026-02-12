@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate
 from .models import User
 from .models import Competition
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import datetime
 
 @api_view(['GET'])
 def hello_world(request):
@@ -65,12 +67,12 @@ def login(request):
 def create_competition(request):
     name = request.data.get("name")
     description = request.data.get("description", "")
-    start_date = request.data.get("start_date")
-    end_date = request.data.get("end_date")
+    start_date_str = request.data.get("start_date")
+    end_date_str = request.data.get("end_date")
     max_participants = request.data.get("max_participants")
     user_id = request.data.get("user_id")
 
-    if not name or not user_id or not start_date or not end_date or not max_participants:
+    if not name or not user_id or not start_date_str or not end_date_str or not max_participants:
         return Response(
             {"error": "Missing required fields"}, status = 400)
     
@@ -78,6 +80,14 @@ def create_competition(request):
         user = User.objects.get(id = user_id)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status = 404)
+    
+    start_date = datetime.fromisoformat(start_date_str)
+    end_date = datetime.fromisoformat(end_date_str)
+
+    if timezone.is_naive(start_date):
+        start_date = timezone.make_aware(start_date)
+    if timezone.is_naive(end_date):
+        end_date = timezone.make_aware(end_date)
     
     competition = Competition.objects.create(
         name = name, 
