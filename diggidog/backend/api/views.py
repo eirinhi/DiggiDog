@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from .models import User
 from .models import Competition
+from django.core.exceptions import ValidationError
 
 @api_view(['GET'])
 def hello_world(request):
@@ -71,9 +72,7 @@ def create_competition(request):
 
     if not name or not user_id or not start_date or not end_date or not max_participants:
         return Response(
-            {"error": "Missing required fields"},
-            status = 400
-        )
+            {"error": "Missing required fields"}, status = 400)
     
     try:
         user = User.objects.get(id = user_id)
@@ -88,6 +87,13 @@ def create_competition(request):
         max_participants = max_participants,
         created_by = user
     )
+
+    try:
+        competition.full_clean()
+        competition.save()
+    except ValidationError as e:
+        return Response({"error": e.message_dict}, status=400)
+
 
     return Response({
         "message": "Competition created",

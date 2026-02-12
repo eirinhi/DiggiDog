@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import django.utils.timezone
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import timedelta
 
 
 # Create your models here.
@@ -40,6 +43,24 @@ class Competition(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def clean(self):
+        now = timezone.now()
 
+        if self.start_date < now:
+            raise ValidationError({"start_date": "Start date cannot be in the past."})
 
+        if self.end_date <= self.start_date:
+            raise ValidationError({"end_date": "End date cannot be before start date."})
+        
+        max_duration = timedelta(weeks=2)
+        if self.end_date - self.start_date > max_duration:
+            raise ValidationError({"start_date": "Competition cannot last more than 2 weeks."})
+        
+        max_future = now + timedelta(days=61)
+        if self.start_date > max_future:
+            raise ValidationError({"start_date": "Competition cannot start more than 2 months from now."})
+        
+        if not (1 <= self.max_participants <= 20):
+            raise ValidationError({"max_participants": "Number of participants must be between 1 and 20."})
 
