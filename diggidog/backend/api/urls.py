@@ -5,6 +5,6 @@ urlpatterns = [
     path('hello/', hello_world),
     path('register/', register, name='register'),
     path('login/', login, name='login'),
-    path('create_comp/', create_competition),
+    path('create_comp/', create_competition, name='create_competition'),
 
 ]

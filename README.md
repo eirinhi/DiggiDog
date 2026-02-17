@@ -47,6 +47,14 @@ Open the localhost link
 
 
 
+## How to test
+```bash
+cd diggidog/backend
+python3 manage.py test
+```
+
+
+
 
 
 
