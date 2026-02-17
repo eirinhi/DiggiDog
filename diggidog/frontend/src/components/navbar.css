@@ -1,0 +1,56 @@
+.navBar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: white;
+  z-index: 50; /*Sikrer at navigasjonsdelen ligger over Hero-delen, dvs boksen i blå*/
+  box-shadow: 0 4px 6px rgba(11, 31, 58, 0.15);
+}
+
+.navBar__inner {
+  height: 120px; /*Matcher høyden opp mot padding-top i home.css*/
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /*Holder midten sentrert */
+  align-items: center;
+}
+
+.navBar__box {
+  display: flex;
+  align-items: center;
+}
+
+.navBar__boxcenter {
+  justify-content: center;
+}
+
+.navBar__boxright {
+  justify-content: flex-end;
+}
+
+.navBar__logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navBar__logoImage {
+  height: 68px;
+  width: auto;
+  display: block;
+}
+
+.navBar__login {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background-color: #0b1f3a;
+}
+
+.navBar__login:hover {
+  background: #0b1f3a9f;
+}
