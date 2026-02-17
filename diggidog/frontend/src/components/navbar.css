@@ -28,6 +28,7 @@
 
 .navBar__boxright {
   justify-content: flex-end;
+
 }
 
 .navBar__logo {
@@ -49,8 +50,31 @@
   padding: 6px 10px;
   border-radius: 10px;
   background-color: #0b1f3a;
+  height: 36px;
+  width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navBar__login:hover {
+  background: #0b1f3a9f;
+}
+
+.navBar__admin {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background-color: #0b1f3a;
+  height: 36px;
+  width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navBar__admin:hover {
   background: #0b1f3a9f;
 }

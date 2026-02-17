@@ -4,9 +4,8 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: #519ABA;
+  background: #ffffff;
   font-family: Arial, sans-serif;
-  background-image: url("./assets/dog.png");
   background-repeat: no-repeat;     
   background-size: cover;          
   background-position: center 50% ;
@@ -16,7 +15,7 @@
   width: 60%;
   max-width: 420px;
   background: rgb(255, 255, 255);
-  border: 1px solid #2c4472;
+  border: 1px solid #793976;
   border-radius: 12px;
   padding: 22px;
   margin-top: -300px;
@@ -27,9 +26,8 @@
   margin: 0 0 20px;
   font-size: 30px;
   letter-spacing: -0.5px;
+  color: rgb(0, 0, 0);
 }
-
-
 
 .actions {
   display: flex;
@@ -49,7 +47,7 @@
 .btn-primary {
   background: #2b5cff;
   color: white;
-  border-color: #2b5cff;
+  border-color: #ffffff;
 }
 
 .btnSmall {
@@ -61,3 +59,5 @@
   line-height: 1;
   border-radius: 10px;
 }
+
+
