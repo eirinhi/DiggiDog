@@ -47,6 +47,9 @@ class Competition(models.Model):
     def clean(self):
         now = timezone.now()
 
+        if not self.created_by.is_admin:
+            raise ValidationError("Only admin users can create competitions.")
+
         if self.start_date < now:
             raise ValidationError({"start_date": "Start date cannot be in the past."})
 
