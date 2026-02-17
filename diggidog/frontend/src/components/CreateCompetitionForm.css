@@ -3,7 +3,7 @@
     display: grid;
     place-items: center;
     padding: 24px;
-    background: #519ABA;
+    background: #FAF9F6;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -15,6 +15,7 @@
     border-radius: 12px;
     padding: 22px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 24px;
 }
 
 .title {

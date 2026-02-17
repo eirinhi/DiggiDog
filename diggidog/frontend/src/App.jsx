@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./App.css";
 import CreateCompetitionForm from './components/CreateCompetitionForm';
 
@@ -7,7 +8,8 @@ import CreateCompetitionForm from './components/CreateCompetitionForm';
 const API_BASE = "http://127.0.0.1:8000/api";
 
 export default function App() {
-  const [mode, setMode] = useState("login"); 
+  const navigate = useNavigate();
+  const [mode, setMode] = useState("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -35,10 +37,7 @@ export default function App() {
       setError("Please fill in both Username and Password.");
       return;
     }
-   
-
-
-
+  
     setError("");
     setMessage("");
     setLoading(true);
@@ -59,8 +58,8 @@ export default function App() {
 
   
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      setLoggedIn(true);
+      window.dispatchEvent(new Event("userChanged"));
+      navigate("/");
     } catch (err) {
       setError("Could not reach server. Is Django running?");
     } finally {
