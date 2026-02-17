@@ -10,7 +10,7 @@ from django.utils import timezone
 class CreateCompetitionTestCase(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="user_1", password="test_password")
+        self.user = User.objects.create_user(username="user_1",name="", password="test_password")
         self.start_date = timezone.now() + timedelta(days=1)
         self.end_date = timezone.now() + timedelta(days=8)
         self.user.is_admin = True
