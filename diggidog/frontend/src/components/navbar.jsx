@@ -38,7 +38,7 @@ export default function Navbar() {
         {/* 1fr auto 1fr med en tom venstrekolonne skal sikre at logoen alltid er sentrert*/}
         <div className="navBar__box navBar__boxleft">
           {loggedIn && isAdmin && (
-            <Link className="navBar__admin" to="/admin">Admin</Link>
+            <Link className="navBar__admin" to="/admin">Create Competition</Link>
           )}
         </div>
         <div className="navBar__box navBar__boxcenter">
@@ -50,7 +50,7 @@ export default function Navbar() {
           {loggedIn ? (
             <Link className="navBar__login" onClick={handleLogout} to="/">Log out</Link>
           ) : (
-          <Link className="navBar__login" to="/login">Sing In</Link>
+            <Link className="navBar__login" to="/login">Sign In</Link>
           )}
         </div>
       </div>

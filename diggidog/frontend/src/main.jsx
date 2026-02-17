@@ -7,7 +7,6 @@ import CreateCompetitionForm from './components/CreateCompetitionForm';
 import CompOverview from './CompOverview.jsx'
 import Navbar from './components/navbar.jsx'
 import Home from './homepage/home.jsx'
-import App from './App.jsx'
 import CC from './components/CreateCompetitionForm.jsx'
 
 createRoot(document.getElementById('root')).render(
