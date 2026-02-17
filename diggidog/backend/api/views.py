@@ -13,6 +13,7 @@ def hello_world(request):
 def register(request):
     username = request.data.get("username")
     password = request.data.get("password")
+    name = request.data.get("name")
 
     if not username or not password:
         return Response({"error": "Username and password required"}, status=400)
@@ -20,13 +21,14 @@ def register(request):
     if User.objects.filter(username=username).exists():
         return Response({"error": "Username already exists"}, status=400)
 
-    user = User.objects.create_user(username=username, password=password)
+    user = User.objects.create_user(username=username, password=password, name=name)
 
     return Response({
         "message": "User created", 
         "user": {
             "id": user.id,
             "username": user.username,
+            "name": user.name,
             "bio": user.bio,
             "is_admin": user.is_admin,
             "data_joined": user.date_joined.timestamp()
@@ -53,6 +55,7 @@ def login(request):
         "user": {
             "id": user.id,
             "username": user.username,
+            "name": user.name,
             "bio": user.bio,
             "is_admin": user.is_admin,
             "data_joined": user.date_joined.timestamp()

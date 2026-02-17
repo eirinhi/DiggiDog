@@ -40,6 +40,13 @@ export default function CreateCompetitionForm(){
             return;
         }
 
+        const maxFuture = 61 * 24 * 60 * 60 *1000;
+        if (start-now > maxFuture) {
+            setError('The competition can not be more than 2 months in the future.')
+            setLoading(false);
+            return;
+        }
+
 
         try {
             const reponse = await fetch('http://localhost:8000/api/create_comp/', {
