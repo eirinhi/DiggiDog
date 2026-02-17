@@ -1,0 +1,11 @@
+.page {
+  background: #FAF9F6;
+  color: #1f2937;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  width: 100%;
+  min-height: 100vh;
+}
+  
+.mainpage{
+  padding-top: 120px;
+}

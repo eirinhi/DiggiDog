@@ -7,10 +7,9 @@
   background: #519ABA;
   font-family: Arial, sans-serif;
   background-image: url("./assets/dog.png");
-           /* ✅ one dog size (change 420px) */
-  background-repeat: no-repeat;      /* ✅ stops tiling */
-  background-size: cover;          /* ✅ fills fullscreen nicely */
-  background-position: center 50% ; /* ✅ keeps dogs near bottom */       /* ✅ centers it */
+  background-repeat: no-repeat;     
+  background-size: cover;          
+  background-position: center 50% ;
 }
 
 .card {
@@ -28,7 +27,6 @@
   margin: 0 0 20px;
   font-size: 30px;
   letter-spacing: -0.5px;
-
 }
 
 
@@ -52,4 +50,14 @@
   background: #2b5cff;
   color: white;
   border-color: #2b5cff;
+}
+
+.btnSmall {
+  flex: 0 0 auto;
+  width: auto;    
+  min-width: 72px;  
+  padding: 6px 10px;  
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 10px;
 }
