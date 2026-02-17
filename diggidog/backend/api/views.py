@@ -119,3 +119,20 @@ def create_competition(request):
             "max_participants": competition.max_participants,
         }
     }, status = 201)
+
+@api_view(['GET'])
+def get_competitions(request):
+    competitions = Competition.objects.all()
+
+    comps = []
+    for competition in competitions:
+        comps.append({
+            "id": competition.id,
+            "name": competition.name,
+            "description": competition.description,
+            "start_date": competition.start_date,
+            "end_date": competition.end_date,
+            "max_participants": competition.max_participants,
+        })
+
+    return Response(comps, status = 200)
