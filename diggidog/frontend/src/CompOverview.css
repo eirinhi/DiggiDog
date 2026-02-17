@@ -1,0 +1,96 @@
+.comp-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 200px 16px 24px;
+}
+
+.comp-header {
+  margin-bottom: 18px;
+}
+
+.comp-title {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.3px;
+}
+
+.comp-subtitle {
+  margin: 6px 0 0;
+  opacity: 0.75;
+}
+
+.comp-state {
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(64, 46, 124, 0.04);
+}
+
+.comp-error {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.comp-error-msg {
+  margin-top: 6px;
+  opacity: 0.85;
+  word-break: break-word;
+}
+
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+
+.comp-card {
+  border-radius: 16px;
+  padding: 16px;
+  background: #fcfcfc;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.comp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10);
+}
+
+.comp-card-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.comp-card-desc {
+  margin: 10px 0 12px;
+  opacity: 0.82;
+  line-height: 1.45;
+}
+
+.comp-meta {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.comp-meta-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.comp-meta-row dt {
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.comp-meta-row dd {
+  margin: 0;
+}

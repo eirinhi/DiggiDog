@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import "./CompOverview.css";
 
 const API_BASE = "http://127.0.0.1:8000/api";
 
 function formatDate(value) {
   if (!value) return "-";
   const d = new Date(value);
-
   if (Number.isNaN(d.getTime())) return String(value);
   return d.toLocaleString();
 }
@@ -13,10 +13,14 @@ function formatDate(value) {
 export default function CompOverview() {
   const [competitions, setCompetitions] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchCompetitions() {
       try {
+        setLoading(true);
         const res = await fetch(`${API_BASE}/get_comps/`, {
           method: "GET",
           headers: { Accept: "application/json" },
@@ -28,66 +32,77 @@ export default function CompOverview() {
         }
 
         const comps = await res.json();
-
-        setCompetitions(comps);
-        setError(null);
+        if (!cancelled) {
+          setCompetitions(Array.isArray(comps) ? comps : []);
+          setError(null);
+        }
       } catch (err) {
         console.error(err);
-        setError(err.message || "Could not reach server. Is Django running?");
-        setCompetitions([]);
+        if (!cancelled) {
+          setError(err?.message || "Could not reach server. Is Django running?");
+          setCompetitions([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchCompetitions();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  if (error) return <p>Error: {error}</p>;
-
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Competitions</h2>
+    <section className="comp-container" >
+      <header className="comp-header">
+        <h2 className="comp-title">Competitions</h2>
+        <p className="comp-subtitle">Browse active and upcoming competitions.</p>
+      </header>
 
-      {competitions.length === 0 ? (
-        <p>No competitions found.</p>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 12,
-          }}
-        >
+      {loading && <p className="comp-state">Loading competitions…</p>}
+
+      {!loading && error && (
+        <div className="comp-error">
+          <strong>Something went wrong:</strong>
+          <div className="comp-error-msg">{error}</div>
+        </div>
+      )}
+
+      {!loading && !error && competitions.length === 0 && (
+        <p className="comp-state">No competitions found.</p>
+      )}
+
+      {!loading && !error && competitions.length > 0 && (
+        <div className="comp-grid">
           {competitions.map((c) => (
-            <div
-              key={c.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: 10,
-                padding: 12,
-              }}
-            >
-              <h3 style={{ margin: "0 0 8px" }}>{c.name}</h3>
+            <article key={c.id} className="comp-card">
+              <div className="comp-card-top">
+                <h3 className="comp-card-title">{c.name}</h3>
+              </div>
 
-              <p style={{ margin: "0 0 8px", opacity: 0.85 }}>
+              <p className="comp-card-desc">
                 {c.description || "No description"}
               </p>
 
-              <div style={{ fontSize: 14, lineHeight: 1.5 }}>
-                <div>
-                  <strong>Start:</strong> {formatDate(c.start_date)}
+              <dl className="comp-meta">
+                <div className="comp-meta-row">
+                  <dt>Start</dt>
+                  <dd>{formatDate(c.start_date)}</dd>
                 </div>
-                <div>
-                  <strong>End:</strong> {formatDate(c.end_date)}
+                <div className="comp-meta-row">
+                  <dt>End</dt>
+                  <dd>{formatDate(c.end_date)}</dd>
                 </div>
-                <div>
-                  <strong>Max participants:</strong>{" "}
-                  {c.max_participants ?? "-"}
+                <div className="comp-meta-row">
+                  <dt>Max participants</dt>
+                  <dd>{c.max_participants ?? "-"}</dd>
                 </div>
-              </div>
-            </div>
+              </dl>
+            </article>
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }
