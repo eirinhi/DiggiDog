@@ -13,6 +13,8 @@ class CreateCompetitionTestCase(APITestCase):
         self.user = User.objects.create_user(username="user_1", password="test_password")
         self.start_date = timezone.now() + timedelta(days=1)
         self.end_date = timezone.now() + timedelta(days=8)
+        self.user.is_admin = True
+        self.user.save()
 
     def test_create_competition_no_data(self):
         url = reverse("create_competition")
