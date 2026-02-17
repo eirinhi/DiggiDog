@@ -11,6 +11,7 @@
   background-repeat: no-repeat;      /* ✅ stops tiling */
   background-size: cover;          /* ✅ fills fullscreen nicely */
   background-position: center 50% ; /* ✅ keeps dogs near bottom */       /* ✅ centers it */
+  
 }
 
 .card {
