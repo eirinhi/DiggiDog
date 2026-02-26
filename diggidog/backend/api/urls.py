@@ -1,11 +1,13 @@
 from django.urls import path
-from .views import hello_world, register, login, create_competition, get_competitions
+from .views import hello_world, register, login, create_competition, get_competitions, get_ad, upload_ad
 
 urlpatterns = [
     path('hello/', hello_world),
     path('register/', register, name='register'),
     path('login/', login, name='login'),
     path('create_comp/', create_competition, name='create_competition'),
-    path('get_comps/', get_competitions, name='get_comps')
+    path('get_comps/', get_competitions, name='get_comps'),
+    path('get_ad/', get_ad, name='get_ad'),
+    path('upload_ad/', upload_ad, name='upload_ad')
 
 ]
