@@ -41,6 +41,8 @@ class Competition(models.Model):
     end_date = models.DateTimeField()
     max_participants = models.PositiveIntegerField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to="competition_pics/", blank=True, null=True)
+
 
     def __str__(self):
         return self.name
