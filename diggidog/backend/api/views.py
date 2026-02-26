@@ -26,7 +26,7 @@ def register(request):
         return Response({"error": "Username already exists"}, status=400)
 
     user = User.objects.create_user(username=username, password=password, name=name)
-
+    
     return Response({
         "message": "User created", 
         "user": {
@@ -94,8 +94,7 @@ def create_competition(request):
         start_date = timezone.make_aware(start_date)
     if timezone.is_naive(end_date):
         end_date = timezone.make_aware(end_date)
-
-    
+ 
     competition = Competition(
         name=name,
         description=description,
