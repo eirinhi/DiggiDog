@@ -7,8 +7,10 @@ export default function CreateCompetitionForm() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [maxParticipants, setMaxParticipants] = useState("");
-  const [compPicture, setCompPicture] = useState(null); // <-- store File
+  const user = JSON.parse(localStorage.getItem("user"));
 
+  const [compPicture, setCompPicture] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(""); // <-- add back
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -18,6 +20,12 @@ export default function CreateCompetitionForm() {
     const file = e.target.files?.[0] || null;
     setCompPicture(file);
 
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setPreviewUrl("");
+    }
+  }; // <-- IMPORTANT: close the function
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,7 +62,6 @@ export default function CreateCompetitionForm() {
       return;
     }
 
-    // If you want the picture required:
     if (!compPicture) {
       setError("Please upload a picture.");
       setLoading(false);
@@ -62,28 +69,37 @@ export default function CreateCompetitionForm() {
     }
 
     try {
-      // Use FormData for file uploads
       const formData = new FormData();
       formData.append("name", name);
       formData.append("description", description);
       formData.append("start_date", startDate);
       formData.append("end_date", endDate);
       formData.append("max_participants", String(Number(maxParticipants)));
-      formData.append("user_id", "1");
-      formData.append("picture", compPicture); 
+      formData.append("user_id", String(user.id));
+      formData.append("picture", compPicture);
+
+      console.log("creating comp as user:", user);
+
       const response = await fetch("http://localhost:8000/api/create_comp/", {
         method: "POST",
-     
         body: formData,
       });
 
       if (!response.ok) {
-        // backend might return JSON error, but sometimes plain text
-        let message = "Something went wrong";
-        try {
-          const data = await response.json();
-          message = data.error || message;
-        } catch (_) {}
+        const data = await response.json().catch(() => ({}));
+        const err = data.error ?? data;
+
+        const message =
+          typeof err === "string"
+            ? err
+            : Array.isArray(err)
+            ? err.join(", ")
+            : err && typeof err === "object"
+            ? Object.entries(err)
+                .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
+                .join(" | ")
+            : "Something went wrong";
+
         throw new Error(message);
       }
 
@@ -94,6 +110,7 @@ export default function CreateCompetitionForm() {
       setEndDate("");
       setMaxParticipants("");
       setCompPicture(null);
+      setPreviewUrl("");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -111,7 +128,7 @@ export default function CreateCompetitionForm() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Competition Name *</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
 
           <div className="form-group">
@@ -121,22 +138,12 @@ export default function CreateCompetitionForm() {
 
           <div className="form-group">
             <label>Start Date & Time *</label>
-            <input
-              type="datetime-local"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-            />
+            <input type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
           </div>
 
           <div className="form-group">
             <label>End Date & Time *</label>
-            <input
-              type="datetime-local"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              required
-            />
+            <input type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
           </div>
 
           <div className="form-group">
@@ -153,18 +160,9 @@ export default function CreateCompetitionForm() {
 
           <div className="form-group">
             <label>Add picture *</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              required
-            />
+            <input type="file" accept="image/*" onChange={handleFileChange} required />
             {previewUrl && (
-              <img
-                src={previewUrl}
-                alt="Preview"
-                style={{ maxWidth: "100%", marginTop: 8, borderRadius: 8 }}
-              />
+              <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", marginTop: 8, borderRadius: 8 }} />
             )}
           </div>
 
