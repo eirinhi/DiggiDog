@@ -6,8 +6,9 @@ import App from './App.jsx'
 import CreateCompetitionForm from './components/CreateCompetitionForm';
 import CompOverview from './CompOverview.jsx'
 import Navbar from './components/navbar.jsx'
-import Home from './homepage/home.jsx'
+import Home from './pages/homepage/home.jsx'
 import CC from './components/CreateCompetitionForm.jsx'
+import Userpage from "./pages/userpage/userpage.jsx"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,7 +16,8 @@ createRoot(document.getElementById('root')).render(
       <Navbar /> {/*Ligger utenfor routes så den vises på alle sider */}
       <Routes>
         <Route path="/" element={<Home />} /> 
-        <Route path="/login" element={<App />} /> 
+        <Route path="/login" element={<App />} />
+        <Route path="/profile" element={<Userpage />} />
         <Route path="/admin" element={<CC />} /> 
       </Routes>
     </BrowserRouter>
