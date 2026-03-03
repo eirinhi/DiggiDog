@@ -38,7 +38,7 @@ export default function Navbar() {
           {loggedIn && isAdmin && (
             <>
               <Link className="navBar__admin" to="/admin">Create Competition</Link>
-              <Link className="navBar__admin navBar__adminSecondary" to="/admin">Add Ad</Link>
+              <Link className="navBar__admin navBar__adminSecondary" to="/upload_ad">Add Ad</Link>
             </>
           )}
         </div>

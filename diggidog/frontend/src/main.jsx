@@ -8,6 +8,7 @@ import CompOverview from './CompOverview.jsx'
 import Navbar from './components/navbar.jsx'
 import Home from './homepage/home.jsx'
 import CC from './components/CreateCompetitionForm.jsx'
+import AdUploadForm from './components/AdUploadForm.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<Home />} /> 
         <Route path="/login" element={<App />} /> 
         <Route path="/admin" element={<CreateCompetitionForm />} /> 
+        <Route path="/upload_ad" element={<AdUploadForm />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
