@@ -1,8 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .models import User
-from .models import Competition
+from .models import User, Competition, Participant
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
@@ -51,7 +50,7 @@ def login(request):
     user = authenticate(username=username, password=password)
 
     if user is None:
-        return Response({"error": "Invalid credentials"}, status= 401)
+        return Response({"error": "Invalid credentials"}, status=401)
 
     return Response({
         "message": "Login successful",
@@ -77,12 +76,12 @@ def create_competition(request):
 
     if not name or not user_id or not start_date_str or not end_date_str or not max_participants:
         return Response(
-            {"error": "Missing required fields"}, status = 400)
+            {"error": "Missing required fields"}, status=400)
     
     try:
         user = User.objects.get(id = user_id)
     except User.DoesNotExist:
-        return Response({"error": "User not found"}, status = 404)
+        return Response({"error": "User not found"}, status=404)
     
     start_date = datetime.fromisoformat(start_date_str)
     end_date = datetime.fromisoformat(end_date_str)
@@ -136,3 +135,85 @@ def get_competitions(request):
         })
 
     return Response(comps, status = 200)
+
+@api_view(['POST'])
+def register_participant(request):
+    user_id = request.data.get("user_id")
+    competition_id = request.data.get("competition_id")
+    dog_id = request.data.get("dog_id")
+
+    if not user_id or not competition_id or not dog_id:
+        return Response({"error": "user-id, competition-id and dog-id are required"}, status=400)
+    
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    
+    try:
+        competition = Competition.objects.get(id=competition_id)
+    except Competition.DoesNotExist:
+        return Response({"error": "Competition not found"}, status=404)
+    
+    participant = Participant(user=user, competition=competition, dog_identifier=dog_id)
+    try:
+        participant.full_clean()
+        participant.save()
+    except ValidationError as e:
+        return Response({"error": e.message_dict if hasattr(e, 'message_dict') else str(e)}, status=400)
+    
+    return Response({
+        "message": "Participant registered",
+        "participant": {
+            "id": participant.id,
+            "user_id": user.id,
+            "competition_id": competition.id,
+            "dog_id": participant.dog_identifier
+        }
+    }, status=201)
+
+@api_view(['GET'])
+def get_participant(request, competition_id):
+    try:
+        competition = Competition.objects.get(id=competition_id)
+    except Competition.DoesNotExist:
+        return Response({"error": "Competition not found"}, status=404)
+    pts = []
+    for p in competition.participants.all():
+        pts.append({
+            "id": p.id,
+            "user_id": p.user.id,
+            "dog_id": p.dog_identifier
+        })
+    return Response(pts, status=200)
+
+@api_view(['PUT', 'PATCH', 'DELETE'])
+def update_participant(request, participant_id):
+    try:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
+        return Response({"error": "Participant not found"}, status=404)
+    
+    if request.method == 'DELETE':
+        participant.delete()
+        return Response({"message": "Participant removed"}, status=200)
+
+    dog_id = request.data.get("dog_id")
+    if dog_id:
+        participant.dog_identifier = dog_id
+
+    try:
+        participant.full_clean()
+        participant.save()
+    except ValidationError as e:
+        return Response({"error": e.message_dict if hasattr(e, 'message_dict') else str(e)}, status=400)
+    
+    return Response({
+        "message": "Participant updated",
+        "participant": {
+            "id": participant.id,
+            "user_id": participant.user.id,
+            "competition_id": participant.competition.id,
+            "dog_id": participant.dog_identifier,
+        }
+    }, status=200)

@@ -6,7 +6,6 @@ from django.utils import timezone
 from datetime import timedelta
 
 
-# Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self, username, name, password=None):
         if not username:
@@ -68,3 +67,35 @@ class Competition(models.Model):
         if not (1 <= self.max_participants <= 20):
             raise ValidationError({"max_participants": "Number of participants must be between 1 and 20."})
 
+class Participant(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="participants")
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name="participants")
+    dog_identifier = models.CharField(max_length=100, help_text="Identifier for the dog entered by the user")
+
+    class Meta:
+        unique_together = ("competition", "user", "dog_identifier")
+
+    def __str__(self):
+        return f"Participant(user={self.user.username}, comp={self.competition.name}, dog={self.dog_identifier})"
+
+    def clean(self):
+        if self.competition and self.competition.max_participants is not None:
+            qs = Participant.objects.filter(competition=self.competition)
+            if not self.pk:
+                current_count = qs.count()
+            else:
+                current_count = qs.exclude(pk=self.pk).count()
+            if current_count >= self.competition.max_participants:
+                raise ValidationError("The competition has reached its maximum number of participants.")
+
+        if self.competition and self.user and self.dog_identifier:
+            duplicate = Participant.objects.filter(
+                competition=self.competition,
+                user=self.user,
+                dog_identifier=self.dog_identifier,
+            )
+            if self.pk:
+                duplicate = duplicate.exclude(pk=self.pk)
+            if duplicate.exists():
+                raise ValidationError("This dog has already been entered.")    
