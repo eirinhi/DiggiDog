@@ -9,7 +9,7 @@
 .navBar__inner {
   height: 120px;
   box-sizing: border-box;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
@@ -52,10 +52,11 @@
   text-decoration: none;
   color: #ffffff;
   font-weight: 600;
-  padding: 6px 10px;
+  padding: 6px 16px;
   border-radius: 10px;
   background-color: #0b1f3a;
   height: 36px;
+  white-space: nowrap;
   width: 64px;
 
   display: flex;
@@ -86,6 +87,30 @@
   background: #0b1f3a9f;
 }
 
+.navBar__userActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navBar__profileLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #0b1f3a;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.navBar__profileLink:hover {
+  color: #0b1f3a9f;
+}
+
+.navBar__profileIcon {
+  width: 18px;
+  height: 18px;
+}
 .navBar__adminSecondary {
   width: 70px;
 

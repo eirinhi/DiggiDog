@@ -1,7 +1,7 @@
-import HowItWorks from "../components/HowItWorks.jsx"
-import Hero from "../components/Hero.jsx"
+import HowItWorks from "../../components/HowItWorks.jsx"
+import Hero from "../../components/Hero.jsx"
 import "./Home.css"
-import Ad from "../components/Ad.jsx"
+import Ad from "../../components/Ad.jsx"
 export default function Home() {
   return (
     <div className="homePage">

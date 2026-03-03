@@ -1,0 +1,283 @@
+.userpage {
+  padding-top: 140px;
+  padding-bottom: 60px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.userpage__container {
+  width: 100%;
+  max-width: 560px;
+  padding: 0 24px;
+}
+
+.userpage__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.userpage__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0b1f3a;
+  margin: 0;
+}
+
+.userpage__card {
+  background: #ffffff;
+  border: 1px solid #d6dbe6;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(11, 31, 58, 0.08);
+}
+
+.userpage__profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.userpage__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #0b1f3a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.userpage__profileInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userpage__displayName {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0b1f3a;
+  margin: 0;
+}
+
+.userpage__username {
+  font-size: 14px;
+  color: #888;
+  margin: 4px 0 0;
+}
+
+.userpage__section {
+  margin-bottom: 20px;
+}
+
+.userpage__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.userpage__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d6dbe6;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.userpage__input:focus {
+  border-color: #2b5cff;
+}
+
+.userpage__separator {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 28px 0;
+}
+
+.userpage__dogHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+
+.userpage__dogTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0b1f3a;
+  margin: 0;
+}
+
+.userpage__dogCard {
+  background: #f8f9fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.userpage__dogCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.userpage__dogCardTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0b1f3a;
+}
+
+.userpage__removeDogBtn {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.userpage__removeDogBtn:hover {
+  background: #fef2f2;
+}
+
+.userpage__dogImageSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.userpage__dogImage {
+  width: 100%;
+  max-height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 12px;
+}
+
+.userpage__dogImageSection .userpage__dogImage {
+  width: 72px;
+  max-height: 72px;
+  margin-bottom: 0;
+}
+
+.userpage__dogImagePlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  border: 1px dashed #d6dbe6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.userpage__dogImageBtn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #d6dbe6;
+  background: white;
+  color: #555;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.userpage__dogImageBtn:hover {
+  border-color: #2b5cff;
+  color: #2b5cff;
+}
+
+.userpage__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.userpage__ageField {
+  max-width: 200px;
+}
+
+.userpage__addDogBtn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px dashed #d6dbe6;
+  background: transparent;
+  color: #555;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.userpage__addDogBtn:hover {
+  border-color: #0b1f3a;
+  color: #0b1f3a;
+}
+
+.userpage__saveBtn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #0b1f3a;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  text-align: center;
+  box-sizing: border-box;
+  transition: background 0.2s;
+}
+
+.userpage__saveBtn:hover {
+  background: #0b1f3abd;
+}
+
+.userpage__saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.userpage__message {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.userpage__message--success {
+  color: #16a34a;
+}
+
+.userpage__message--error {
+  color: #dc2626;
+}

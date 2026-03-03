@@ -70,6 +70,15 @@ class Competition(models.Model):
         if not (1 <= self.max_participants <= 20):
             raise ValidationError({"max_participants": "Number of participants must be between 1 and 20."})
 
+class Dog(models.Model): 
+    id = models.BigAutoField(auto_created= True, primary_key=True)
+    name = models.CharField(max_length=100)
+    breed = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    picture = models.TextField(blank=True, null=True)
+
 class Ad(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     file = models.FileField(upload_to="images/")
