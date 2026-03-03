@@ -17,8 +17,8 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<Home />} /> 
         <Route path="/login" element={<App />} /> 
-        <Route path="/admin" element={<CreateCompetitionForm />} /> 
-        <Route path="/upload_ad" element={<AdUploadForm />} />
+        <Route path="/admin" element={<AdUploadForm />} /> 
+        <Route path="/upload_ad" element={<CompOverview />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
