@@ -2,7 +2,18 @@ import { useEffect, useState } from "react";
 import "./CompOverview.css";
 import Ad from "./components/Ad.jsx";
 
-const API_BASE = "http://127.0.0.1:8000/api";
+const API_BASE = "http://127.0.0.1:8000/api"; 
+
+
+const DJANGO_HOST = "http://127.0.0.1:8000";
+
+function toImageUrl(picture) {
+  if (!picture) return null;
+  if (picture.startsWith("http")) return picture;
+  return `${DJANGO_HOST}${picture}`; // picture like "/media/competition_pics/..."
+}
+
+
 
 function formatDate(value) {
   if (!value) return "-";
@@ -48,6 +59,7 @@ export default function CompOverview() {
       }
     }
 
+
     fetchCompetitions();
     return () => {
       cancelled = true;
@@ -64,8 +76,6 @@ export default function CompOverview() {
           <Ad />
         </div>
       </aside>
-
-
       <section className="comp-container">
         <header className="comp-header">
           <h2 className="comp-title">Competitions</h2>
@@ -86,32 +96,45 @@ export default function CompOverview() {
         )}
 
         {!loading && !error && competitions.length > 0 && (
-          <div className="comp-grid">
-            {competitions.map((c) => (
-              <article key={c.id} className="comp-card">
-                <div className="comp-card-top">
-                  <h3 className="comp-card-title">{c.name}</h3>
-                </div>
+              <div className="comp-grid">
+      {competitions.map((c) => {
+        const imgUrl = toImageUrl(c.picture);
 
-                <p className="comp-card-desc">{c.description || "No description"}</p>
+        return (
+          <article key={c.id} className="comp-card">
+            {imgUrl && (
+              <img
+                className="comp-card-img"
+                src={imgUrl}
+                alt={`${c.name} cover`}
+                loading="lazy"
+              />
+            )}
 
-                <dl className="comp-meta">
-                  <div className="comp-meta-row">
-                    <dt>Start</dt>
-                    <dd>{formatDate(c.start_date)}</dd>
-                  </div>
-                  <div className="comp-meta-row">
-                    <dt>End</dt>
-                    <dd>{formatDate(c.end_date)}</dd>
-                  </div>
-                  <div className="comp-meta-row">
-                    <dt>Max participants</dt>
-                    <dd>{c.max_participants ?? "-"}</dd>
-                  </div>
-                </dl>
-              </article>
-            ))}
-          </div>
+            <div className="comp-card-top">
+              <h3 className="comp-card-title">{c.name}</h3>
+            </div>
+
+            <p className="comp-card-desc">{c.description || "No description"}</p>
+
+            <dl className="comp-meta">
+              <div className="comp-meta-row">
+                <dt>Start</dt>
+                <dd>{formatDate(c.start_date)}</dd>
+              </div>
+              <div className="comp-meta-row">
+                <dt>End</dt>
+                <dd>{formatDate(c.end_date)}</dd>
+              </div>
+              <div className="comp-meta-row">
+                <dt>Max participan ts</dt>
+                <dd>{c.max_participants ?? "-"}</dd>
+              </div>
+            </dl>
+          </article>
+        );
+      })}
+        </div>
         )}
       </section>
     </div>
