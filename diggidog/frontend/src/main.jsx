@@ -4,12 +4,12 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import './index.css'
 import App from './App.jsx'
-import CreateCompetitionForm from './components/CreateCompetitionForm';
 import CompOverview from './CompOverview.jsx'
 import Navbar from './components/navbar.jsx'
 import Home from './pages/homepage/home.jsx'
 import CC from './components/CreateCompetitionForm.jsx'
 import Userpage from "./pages/userpage/userpage.jsx"
+import AdUploadForm from './components/AdUploadForm.jsx'
 
 // Fikk hjelp av KI for å passe på at siden alltid var på toppen ved React-route 
 function ScrollToTop() {
@@ -21,7 +21,6 @@ function ScrollToTop() {
 }
 //slutt KI-hjelp
 
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter> {/*Må wrappe i browserRouter slik at routes ikke trigger en full refresh */}
@@ -32,6 +31,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<App />} />
         <Route path="/profile" element={<Userpage />} />
         <Route path="/admin" element={<CC />} /> 
+        <Route path="/upload_ad" element={<AdUploadForm />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

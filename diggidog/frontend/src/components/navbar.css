@@ -2,18 +2,18 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   background: white;
-  z-index: 50; /*Sikrer at navigasjonsdelen ligger over Hero-delen, dvs boksen i blå*/
+  z-index: 50;
   box-shadow: 0 4px 6px rgba(11, 31, 58, 0.15);
 }
 
 .navBar__inner {
-  height: 120px; /*Matcher høyden opp mot padding-top i home.css*/
+  height: 120px;
   box-sizing: border-box;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /*Holder midten sentrert */
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
 }
 
@@ -22,13 +22,18 @@
   align-items: center;
 }
 
+.navBar__boxleft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .navBar__boxcenter {
   justify-content: center;
 }
 
 .navBar__boxright {
   justify-content: flex-end;
-
 }
 
 .navBar__logo {
@@ -52,6 +57,8 @@
   background-color: #0b1f3a;
   height: 36px;
   white-space: nowrap;
+  width: 64px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,6 +77,7 @@
   background-color: #0b1f3a;
   height: 36px;
   width: 150px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -102,4 +110,8 @@
 .navBar__profileIcon {
   width: 18px;
   height: 18px;
+}
+.navBar__adminSecondary {
+  width: 70px;
+
 }
