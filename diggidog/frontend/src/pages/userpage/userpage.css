@@ -166,11 +166,18 @@
 }
 
 .userpage__dogImage {
-  width: 72px;
-  height: 72px;
+  width: 100%;
+  max-height: 200px;
   border-radius: 10px;
   object-fit: cover;
   border: 1px solid #e5e7eb;
+  margin-bottom: 12px;
+}
+
+.userpage__dogImageSection .userpage__dogImage {
+  width: 72px;
+  max-height: 72px;
+  margin-bottom: 0;
 }
 
 .userpage__dogImagePlaceholder {
@@ -230,8 +237,8 @@
 }
 
 .userpage__addDogBtn:hover {
-  border-color: #2b5cff;
-  color: #2b5cff;
+  border-color: #0b1f3a;
+  color: #0b1f3a;
 }
 
 .userpage__saveBtn {
@@ -240,7 +247,7 @@
   padding: 12px;
   border-radius: 10px;
   border: none;
-  background: #2b5cff;
+  background: #0b1f3a;
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
@@ -252,7 +259,7 @@
 }
 
 .userpage__saveBtn:hover {
-  background: #1a4bdd;
+  background: #0b1f3abd;
 }
 
 .userpage__saveBtn:disabled {

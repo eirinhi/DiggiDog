@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./userpage.css";
 
+const API_BASE = "http://127.0.0.1:8000/api";
+
 export default function Userpage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -9,7 +11,8 @@ export default function Userpage() {
     name: "",
     bio: "",
   });
-  const [dogs, setDogs] = useState([]);
+  const [savedDogs, setSavedDogs] = useState([]);
+  const [newDogs, setNewDogs] = useState([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -26,58 +29,114 @@ export default function Userpage() {
       name: parsed.name || "",
       bio: parsed.bio || "",
     });
-    setDogs(parsed.dogs || []);
+
+    fetch(`${API_BASE}/dogs/?owner=${parsed.id}`)
+      .then((res) => res.json())
+      .then((data) => setSavedDogs(data))
+      .catch(() => setSavedDogs([]));
   }, [navigate]);
 
-  
+  const handleDeleteDog = async (dogId) => {
+    try {
+      const res = await fetch(`${API_BASE}/dogs/${dogId}/delete/`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setSavedDogs(savedDogs.filter((dog) => dog.id !== dogId));
+      }
+    } catch (err) {
+      setError("Could not delete dog");
+    }
+  };
 
   const handleAddDog = () => {
-    setDogs([...dogs, { name: "", breed: "", age: "", image: "" }]);
+    setNewDogs([...newDogs, { name: "", breed: "", age: "" }]);
   };
 
-  const handleRemoveDog = (index) => {
-    setDogs(dogs.filter((_, i) => i !== index));
+  const handleRemoveNewDog = (index) => {
+    setNewDogs(newDogs.filter((_, i) => i !== index));
   };
 
-  const handleDogImage = (index, file) => {
+  const handleNewDogImage = (index, file) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      const updated = dogs.map((dog, i) =>
-        i === index ? { ...dog, image: e.target.result } : dog
+      const updated = newDogs.map((dog, i) =>
+        i === index ? { ...dog, imagePreview: e.target.result, imageBase64: e.target.result } : dog
       );
-      setDogs(updated);
+      setNewDogs(updated);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleDogChange = (index, field, value) => {
-    const updated = dogs.map((dog, i) =>
+  const handleNewDogChange = (index, field, value) => {
+    const updated = newDogs.map((dog, i) =>
       i === index ? { ...dog, [field]: value } : dog
     );
-    setDogs(updated);
+    setNewDogs(updated);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true);
     setMessage("");
     setError("");
 
-    const savedDogs = dogs.map((dog) => ({
-      ...dog,
-      age: dog.age !== "" ? parseInt(dog.age) : null,
-    }));
+    try {
+      const profileRes = await fetch(`${API_BASE}/profile/update/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user.id,
+          name: profile.name,
+          bio: profile.bio,
+        }),
+      });
 
-    const updatedUser = { ...user, ...profile, dogs: savedDogs };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    window.dispatchEvent(new Event("userChanged"));
+      if (!profileRes.ok) {
+        const data = await profileRes.json();
+        throw new Error(data.error || "Could not update profile");
+      }
 
-    setMessage("Profilen din er lagret!");
-    setSaving(false);
+      const profileData = await profileRes.json();
+      const updatedUser = { ...user, ...profileData.user };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      window.dispatchEvent(new Event("userChanged"));
+
+      for (const dog of newDogs) {
+        if (!dog.name || !dog.breed || !dog.age) continue;
+
+        const res = await fetch(`${API_BASE}/dogs/create/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: dog.name,
+            breed: dog.breed,
+            age: parseInt(dog.age),
+            owner: user.id,
+            picture: dog.imageBase64 || "",
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Could not save dog");
+        }
+      }
+
+      const dogsRes = await fetch(`${API_BASE}/dogs/?owner=${user.id}`);
+      const dogsData = await dogsRes.json();
+      setSavedDogs(dogsData);
+      setNewDogs([]);
+
+      setMessage("Profile is saved!");
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Redirect skjer i useEffect, vis ingenting mens det skjer
   if (!user) {
     return null;
   }
@@ -99,7 +158,7 @@ export default function Userpage() {
             <div className="userpage__avatar">{initials}</div>
             <div className="userpage__profileInfo">
               <h2 className="userpage__displayName">
-                {profile.name || "Sett navnet ditt"}
+                {profile.name || "Set your name"}
               </h2>
               <p className="userpage__username">@{user.username}</p>
             </div>
@@ -135,21 +194,43 @@ export default function Userpage() {
 
           {/* Hunder-seksjon */}
           <div className="userpage__dogHeader">
-    
-            <h2 className="userpage__dogTitle">Dine hunder</h2>
+            <h2 className="userpage__dogTitle">Your Dogs</h2>
           </div>
 
-          {dogs.map((dog, index) => (
-            <div className="userpage__dogCard" key={index}>
+          {/* Allerede lagrede hunder fra backend */}
+          {savedDogs.map((dog) => (
+            <div className="userpage__dogCard" key={`saved-${dog.id}`}>
+              <div className="userpage__dogCardHeader">
+                <span className="userpage__dogCardTitle">{dog.name}</span>
+                <span
+                  className="userpage__removeDogBtn"
+                  onClick={() => handleDeleteDog(dog.id)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  Remove
+                </span>
+              </div>
+              {dog.picture && (
+                <img className="userpage__dogImage" src={dog.picture} alt={dog.name} />
+              )}
+              <p className="userpage__dogInfo">
+                {dog.breed} · {dog.age} Years
+              </p>
+            </div>
+          ))}
+
+          {/* Nye hunder som ikke er lagret ennå */}
+          {newDogs.map((dog, index) => (
+            <div className="userpage__dogCard" key={`new-${index}`}>
               <div className="userpage__dogCardHeader">
                 <span className="userpage__dogCardTitle">
-                  {dog.name || `Hund ${index + 1}`}
+                  {dog.name || `Ny hund ${index + 1}`}
                 </span>
-                
               </div>
               <div className="userpage__dogImageSection">
-                {dog.image ? (
-                  <img className="userpage__dogImage" src={dog.image} alt={dog.name || "Hund"} />
+                {dog.imagePreview ? (
+                  <img className="userpage__dogImage" src={dog.imagePreview} alt={dog.name || "Hund"} />
                 ) : (
                   <div className="userpage__dogImagePlaceholder">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -160,41 +241,41 @@ export default function Userpage() {
                   </div>
                 )}
                 <label className="userpage__dogImageBtn">
-                  {dog.image ? "Bytt bilde" : "Last opp bilde"}
+                  {dog.imagePreview ? "Bytt bilde" : "Last opp bilde"}
                   <input
                     type="file"
                     accept="image/*"
                     hidden
-                    onChange={(e) => handleDogImage(index, e.target.files[0])}
+                    onChange={(e) => handleNewDogImage(index, e.target.files[0])}
                   />
                 </label>
               </div>
               <div className="userpage__row">
                 <div className="userpage__section">
-                  <label className="userpage__label">Navn</label>
+                  <label className="userpage__label">Name</label>
                   <input
                     className="userpage__input"
                     value={dog.name}
                     onChange={(e) =>
-                      handleDogChange(index, "name", e.target.value)
+                      handleNewDogChange(index, "name", e.target.value)
                     }
                     placeholder="Buddy"
                   />
                 </div>
                 <div className="userpage__section">
-                  <label className="userpage__label">Rase</label>
+                  <label className="userpage__label">Breed</label>
                   <input
                     className="userpage__input"
                     value={dog.breed}
                     onChange={(e) =>
-                      handleDogChange(index, "breed", e.target.value)
+                      handleNewDogChange(index, "breed", e.target.value)
                     }
                     placeholder="Golden Retriever"
                   />
                 </div>
               </div>
               <div className="userpage__section userpage__ageField">
-                <label className="userpage__label">Alder (år)</label>
+                <label className="userpage__label">Age</label>
                 <input
                   className="userpage__input"
                   type="number"
@@ -202,18 +283,18 @@ export default function Userpage() {
                   max={30}
                   value={dog.age}
                   onChange={(e) =>
-                    handleDogChange(index, "age", e.target.value)
+                    handleNewDogChange(index, "age", e.target.value)
                   }
                   placeholder="3"
                 />
               </div>
               <span
                   className="userpage__removeDogBtn"
-                  onClick={() => handleRemoveDog(index)}
+                  onClick={() => handleRemoveNewDog(index)}
                   role="button"
                   tabIndex={0}
                 >
-                  Fjern
+                  Remove
                 </span>
             </div>
           ))}
@@ -224,7 +305,7 @@ export default function Userpage() {
             role="button"
             tabIndex={0}
           >
-            + Legg til hund
+            + Add Dog 
           </span>
 
           <span
@@ -233,7 +314,7 @@ export default function Userpage() {
             role="button"
             tabIndex={0}
           >
-            {saving ? "Lagrer..." : "Lagre profil"}
+            {saving ? "Saving..." : "Save Profile"}
           </span>
 
           {message && (
