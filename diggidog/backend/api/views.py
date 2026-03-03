@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
 from rest_framework.decorators import api_view, parser_classes
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .models import User, Competition
 
 @api_view(['GET'])
@@ -68,7 +68,7 @@ def login(request):
 
 
 @api_view(["POST"])
-@parser_classes([MultiPartParser, FormParser])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def create_competition(request):
     name = request.data.get("name")
     description = request.data.get("description", "")
