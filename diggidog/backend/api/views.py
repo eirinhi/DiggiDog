@@ -1,12 +1,14 @@
 
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from .models import User, Competition, Ad
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
+from random import choice
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from .models import User, Competition
+
 
 @api_view(['GET'])
 def hello_world(request):
@@ -144,3 +146,30 @@ def get_competitions(request):
         })
 
     return Response(comps, status = 200)
+
+@api_view(['POST'])
+def upload_ad(request):
+    file = request.FILES.get("myfile")
+
+    if not file:
+        return Response({"error": "No file uploaded"}, status=400)
+    
+    ad = Ad(file=file)
+    ad.save()
+
+    return Response({"message": "Image saved successfully"}, status=200)
+
+
+@api_view(['GET'])
+def get_ad(request):
+    ads = Ad.objects.all()
+
+    if not ads.exists():
+        return Response({"error": "No ads found"}, status=404)
+
+    ad = choice(ads)
+
+    return Response({
+        "id": ad.id,
+        "image_url": ad.file.url
+    })

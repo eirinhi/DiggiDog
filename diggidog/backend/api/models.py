@@ -70,3 +70,9 @@ class Competition(models.Model):
         if not (1 <= self.max_participants <= 20):
             raise ValidationError({"max_participants": "Number of participants must be between 1 and 20."})
 
+class Ad(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True)
+    file = models.FileField(upload_to="images/")
+
+    def __str__(self):
+        return self.file

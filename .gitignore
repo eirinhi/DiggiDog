@@ -7,7 +7,7 @@ __pycache__/
 
 # ===== Django static/media =====
 staticfiles/
-media/
+
 
 # ===== Node / React =====
 node_modules/

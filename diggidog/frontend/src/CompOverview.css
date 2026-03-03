@@ -1,8 +1,43 @@
+:root{
+  --comp-max: 1100px;
+  --ad-w: 260px;
+  --gap: 24px;
+}
+
+
+.compLayout{
+  display: grid;
+  grid-template-columns: var(--ad-w) minmax(0, var(--comp-max)) 1fr;
+  gap: var(--gap);
+  align-items: start;
+  padding: 0 24px; 
+}
+
+
+.compSideAd{
+  padding-top: 200px;
+}
+
+.compAdBox{
+  display: grid;
+  gap: 16px;
+}
+
+
+@media (max-width: 1200px){
+  .compLayout{
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .compSideAd{
+    display: none;
+  }
+}
 
 .comp-container {
   min-height: calc(100vh - 90px); /* adjust if navbar height differs */
   padding: 140px 24px 56px;
-  background: linear-gradient(180deg, #6f94c9 0%, #7aa2d6 45%, #6f94c9 100%);
+
 }
 
 .comp-header {
@@ -11,6 +46,9 @@
 }
 
 .comp-title {
+  /* margin: 0;
+  font-size: 28px;  
+  letter-spacing: -0.3px; */
   margin: 0 0 6px 0;
   font-size: 44px;
   font-weight: 900;

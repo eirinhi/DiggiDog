@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./CompOverview.css";
+import Ad from "./components/Ad.jsx";
 
 const API_BASE = "http://127.0.0.1:8000/api"; 
 
@@ -66,27 +67,36 @@ export default function CompOverview() {
   }, []);
 
   return (
-    <section className="comp-container" >
-      <header className="comp-header">
-        <h2 className="comp-title">Competitions</h2>
-        <p className="comp-subtitle">Browse active and upcoming competitions.</p>
-      </header>
-
-      {loading && <p className="comp-state">Loading competitions…</p>}
-
-      {!loading && error && (
-        <div className="comp-error">
-          <strong>Something went wrong:</strong>
-          <div className="comp-error-msg">{error}</div>
+    <div className="compLayout">
+      <aside className="compSideAd">
+        <div className="compAdBox">
+          <Ad />
+          <Ad />
+          <Ad />
+          <Ad />
         </div>
-      )}
+      </aside>
+      <section className="comp-container">
+        <header className="comp-header">
+          <h2 className="comp-title">Competitions</h2>
+          <p className="comp-subtitle">Browse active and upcoming competitions.</p>
+        </header>
 
-      {!loading && !error && competitions.length === 0 && (
-        <p className="comp-state">No competitions found.</p>
-      )}
+        {loading && <p className="comp-state">Loading competitions…</p>}
 
-      {!loading && !error && competitions.length > 0 && (
-        <div className="comp-grid">
+        {!loading && error && (
+          <div className="comp-error">
+            <strong>Something went wrong:</strong>
+            <div className="comp-error-msg">{error}</div>
+          </div>
+        )}
+
+        {!loading && !error && competitions.length === 0 && (
+          <p className="comp-state">No competitions found.</p>
+        )}
+
+        {!loading && !error && competitions.length > 0 && (
+              <div className="comp-grid">
       {competitions.map((c) => {
         const imgUrl = toImageUrl(c.picture);
 
@@ -125,7 +135,8 @@ export default function CompOverview() {
         );
       })}
         </div>
-      )}
-    </section>
+        )}
+      </section>
+    </div>
   );
 }

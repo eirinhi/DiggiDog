@@ -1,11 +1,49 @@
+:root{
+  --content-max: 1100px;
+  --ad-w: 260px;
+  --gap: 24px;
+}
+
 .homePage {
   background: #FAF9F6;
   color: #1f2937;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   width: 100%;
   min-height: 100vh;
+  margin-top: 100px;  
 }
-  
-.mainpage{
-  padding-top: 120px;
+
+
+.homeLayout{
+  display: grid;
+  grid-template-columns: var(--ad-w) minmax(0, var(--content-max)) 1fr;
+  gap: var(--gap);
+  align-items: start;
+  padding: 24px;
+}
+
+.homeContent{
+  width: 100%;
+}
+
+
+.homeSideAd{
+  position: static;
+}
+
+.homeAdBox{
+  width: 100%;
+  display: grid;
+  gap: 16px;
+  margin-top :30px;
+}
+
+
+@media (max-width: 1200px){
+  .homeLayout{
+    grid-template-columns: 1fr;
+  }
+  .homeSideAd{
+    display: none;
+  }
 }
