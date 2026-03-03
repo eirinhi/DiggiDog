@@ -68,7 +68,7 @@
   background: #0b1f3a9f;
 }
 
-.navBar__admin {
+.navBar__comps {
   text-decoration: none;
   color: #ffffff;
   font-weight: 600;
@@ -76,14 +76,14 @@
   border-radius: 10px;
   background-color: #0b1f3a;
   height: 36px;
-  width: 150px;
+  width: 100px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.navBar__admin:hover {
+.navBar__comps:hover {
   background: #0b1f3a9f;
 }
 
@@ -111,7 +111,4 @@
   width: 18px;
   height: 18px;
 }
-.navBar__adminSecondary {
-  width: 70px;
 
-}

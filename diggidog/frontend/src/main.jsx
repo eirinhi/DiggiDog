@@ -30,7 +30,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<Home />} /> 
         <Route path="/login" element={<App />} />
         <Route path="/profile" element={<Userpage />} />
-        <Route path="/admin" element={<CC />} /> 
+        <Route path="/create_comps" element={<CC />} /> 
+        <Route path="/comps" element={<CompOverview />} /> 
         <Route path="/upload_ad" element={<AdUploadForm />} />
       </Routes>
     </BrowserRouter>

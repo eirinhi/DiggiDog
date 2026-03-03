@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CompOverview.css";
 import Ad from "./components/Ad.jsx";
+import { Link } from "react-router-dom";
 
 const API_BASE = "http://127.0.0.1:8000/api"; 
 
@@ -26,6 +27,21 @@ export default function CompOverview() {
   const [competitions, setCompetitions] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const checkUser = () => {
+      const savedUser = localStorage.getItem("user");
+
+      if (savedUser) {
+        setLoggedIn(true);
+        const user = JSON.parse(savedUser);
+        setIsAdmin(!!user.is_admin);
+      } else {
+        setLoggedIn(false);
+        setIsAdmin(false);
+      }
+    };
 
   useEffect(() => {
     let cancelled = false;
@@ -59,8 +75,8 @@ export default function CompOverview() {
       }
     }
 
-
     fetchCompetitions();
+    checkUser();
     return () => {
       cancelled = true;
     };
@@ -78,8 +94,15 @@ export default function CompOverview() {
       </aside>
       <section className="comp-container">
         <header className="comp-header">
-          <h2 className="comp-title">Competitions</h2>
-          <p className="comp-subtitle">Browse active and upcoming competitions.</p>
+          <div className="comp-header-content">
+            <h2 className="comp-title">Competitions</h2>
+            <p className="comp-subtitle">Browse active and upcoming competitions.</p>
+          </div>
+          <div className="comp-header-action">
+            {loggedIn && isAdmin && (
+              <Link className="btn-create" to="/create_comps">Create Competition</Link>
+            )}
+          </div>
         </header>
 
         {loading && <p className="comp-state">Loading competitions…</p>}
@@ -127,7 +150,7 @@ export default function CompOverview() {
                 <dd>{formatDate(c.end_date)}</dd>
               </div>
               <div className="comp-meta-row">
-                <dt>Max participan ts</dt>
+                <dt>Max participants</dt>
                 <dd>{c.max_participants ?? "-"}</dd>
               </div>
             </dl>
