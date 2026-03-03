@@ -11,7 +11,6 @@ python3 -m venv venv
 source venv/bin/activate
 pip3 install django djangorestframework django-cors-headers
 python3 -m pip install Pillow
-python3 manage.py makemigrations api
 python3 manage.py migrate
 python3 manage.py runserver
 ```
@@ -52,6 +51,7 @@ Open the localhost link
 ## How to test
 ```bash
 cd diggidog/backend
+python3 -m pip install Pillow
 python3 manage.py test
 ```
 
