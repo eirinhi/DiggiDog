@@ -7,10 +7,12 @@
 
 .compLayout{
   display: grid;
-  grid-template-columns: var(--ad-w) minmax(0, var(--comp-max)) 1fr;
+  grid-template-columns: var(--ad-w) minmax(0, var(--content-max));
   gap: var(--gap);
   align-items: start;
-  padding: 0 24px; 
+  padding: 24px;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 

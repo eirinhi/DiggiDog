@@ -5,9 +5,9 @@
 .hero__inner {
     box-sizing: border-box;
     max-width: 1200px;
+    max-height: 1500px; 
     margin: 0 auto;
     padding: 48px 24px;
-    min-height: 50vh;
     background-color: #0b1f3a;
     color: #ffffff;
     display: flex;
