@@ -1,10 +1,14 @@
-from rest_framework.decorators import api_view
+
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .models import User, Competition, Participant, Dog
+from .models import User, Competition, Participant, Dog, Ad
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
+from random import choice
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+
 
 @api_view(['GET'])
 def hello_world(request):
@@ -24,7 +28,7 @@ def register(request):
         return Response({"error": "Username already exists"}, status=400)
 
     user = User.objects.create_user(username=username, password=password, name=name)
-
+    
     return Response({
         "message": "User created", 
         "user": {
@@ -65,7 +69,8 @@ def login(request):
     }, status=200)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def create_competition(request):
     name = request.data.get("name")
     description = request.data.get("description", "")
@@ -74,15 +79,15 @@ def create_competition(request):
     max_participants = request.data.get("max_participants")
     user_id = request.data.get("user_id")
 
+    picture = request.FILES.get("picture")  # expects FormData field "picture"
+
     if not name or not user_id or not start_date_str or not end_date_str or not max_participants:
-        return Response(
-            {"error": "Missing required fields"}, status=400)
-    
+        return Response({"error": "Missing required fields"}, status=400)
+
     try:
-        user = User.objects.get(id = user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
-    
     start_date = datetime.fromisoformat(start_date_str)
     end_date = datetime.fromisoformat(end_date_str)
 
@@ -90,14 +95,15 @@ def create_competition(request):
         start_date = timezone.make_aware(start_date)
     if timezone.is_naive(end_date):
         end_date = timezone.make_aware(end_date)
-    
-    competition = Competition.objects.create(
-        name = name, 
-        description = description,
-        start_date = start_date,
-        end_date = end_date,
-        max_participants = max_participants,
-        created_by = user
+
+    competition = Competition(
+        name=name,
+        description=description,
+        start_date=start_date,
+        end_date=end_date,
+        max_participants=int(max_participants),
+        created_by=user,
+        picture=picture, 
     )
 
     try:
@@ -106,18 +112,21 @@ def create_competition(request):
     except ValidationError as e:
         return Response({"error": e.message_dict}, status=400)
 
-
-    return Response({
-        "message": "Competition created",
-        "competition": {
-            "id": competition.id,
-            "name": competition.name,
-            "description": competition.description,
-            "start_date": competition.start_date,
-            "end_date": competition.end_date,
-            "max_participants": competition.max_participants,
-        }
-    }, status = 201)
+    return Response(
+        {
+            "message": "Competition created",
+            "competition": {
+                "id": competition.id,
+                "name": competition.name,
+                "description": competition.description,
+                "start_date": competition.start_date,
+                "end_date": competition.end_date,
+                "max_participants": competition.max_participants,
+                "picture": competition.picture.url if competition.picture else None,
+            },
+        },
+        status=201,
+    )
 
 @api_view(['GET'])
 def get_competitions(request):
@@ -132,6 +141,7 @@ def get_competitions(request):
             "start_date": competition.start_date,
             "end_date": competition.end_date,
             "max_participants": competition.max_participants,
+            "picture": competition.picture.url if competition.picture else None,
         })
 
     return Response(comps, status = 200)
@@ -231,6 +241,7 @@ def update_participant(request, participant_id):
             "dog_id": participant.dog.id,
         }
     }, status=200)
+
 
 @api_view(['PATCH'])
 def update_profile(request):
@@ -336,3 +347,33 @@ def get_dogs(request):
         })
 
     return Response(result, status=200)
+
+
+@api_view(['POST'])
+def upload_ad(request):
+    file = request.FILES.get("myfile")
+
+    if not file:
+        return Response({"error": "No file uploaded"}, status=400)
+    
+    ad = Ad(file=file)
+    ad.save()
+
+    return Response({"message": "Image saved successfully"}, status=200)
+
+
+@api_view(['GET'])
+def get_ad(request):
+    ads = Ad.objects.all()
+
+    if not ads.exists():
+        return Response({"error": "No ads found"}, status=404)
+
+    ad = choice(ads)
+
+    return Response({
+        "id": ad.id,
+        "image_url": ad.file.url
+    })
+
+

@@ -40,6 +40,8 @@ class Competition(models.Model):
     end_date = models.DateTimeField()
     max_participants = models.PositiveIntegerField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to="competition_pics/", blank=True, null=True)
+
 
     def __str__(self):
         return self.name
@@ -122,3 +124,8 @@ class Participant(models.Model):
                 duplicate = duplicate.exclude(pk=self.pk)
             if duplicate.exists():
                 raise ValidationError("This dog has already been entered.")    
+
+class Ad(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True)
+    file = models.FileField(upload_to="images/")
+

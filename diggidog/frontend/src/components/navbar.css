@@ -2,18 +2,18 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   background: white;
-  z-index: 50; /*Sikrer at navigasjonsdelen ligger over Hero-delen, dvs boksen i blå*/
+  z-index: 50;
   box-shadow: 0 4px 6px rgba(11, 31, 58, 0.15);
 }
 
 .navBar__inner {
-  height: 120px; /*Matcher høyden opp mot padding-top i home.css*/
+  height: 120px;
   box-sizing: border-box;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /*Holder midten sentrert */
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
 }
 
@@ -22,13 +22,18 @@
   align-items: center;
 }
 
+.navBar__boxleft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .navBar__boxcenter {
   justify-content: center;
 }
 
 .navBar__boxright {
   justify-content: flex-end;
-
 }
 
 .navBar__logo {
@@ -47,11 +52,13 @@
   text-decoration: none;
   color: #ffffff;
   font-weight: 600;
-  padding: 6px 10px;
+  padding: 6px 16px;
   border-radius: 10px;
   background-color: #0b1f3a;
   height: 36px;
+  white-space: nowrap;
   width: 64px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,7 +68,7 @@
   background: #0b1f3a9f;
 }
 
-.navBar__admin {
+.navBar__comps {
   text-decoration: none;
   color: #ffffff;
   font-weight: 600;
@@ -69,12 +76,39 @@
   border-radius: 10px;
   background-color: #0b1f3a;
   height: 36px;
-  width: 150px;
+  width: 100px;
+
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.navBar__admin:hover {
+.navBar__comps:hover {
   background: #0b1f3a9f;
 }
+
+.navBar__userActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navBar__profileLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #0b1f3a;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.navBar__profileLink:hover {
+  color: #0b1f3a9f;
+}
+
+.navBar__profileIcon {
+  width: 18px;
+  height: 18px;
+}
+
