@@ -32,6 +32,7 @@ export default function Navbar() {
     <nav className="navBar">
       <div className="navBar__inner">
         <div className="navBar__box navBar__boxleft">
+
           <Link className="navBar__comps" to="/comps">Competitions</Link>
         </div>
         <div className="navBar__box navBar__boxcenter">
@@ -45,7 +46,7 @@ export default function Navbar() {
                   <circle cx="12" cy="8" r="4" />
                   <path d="M20 21a8 8 0 0 0-16 0" />
                 </svg>
-                Profil
+                Profile
               </Link>
               <Link className="navBar__login" to="/" onClick={() => {
                 handleLogout();

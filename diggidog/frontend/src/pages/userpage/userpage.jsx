@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./userpage.css";
 
 const API_BASE = "http://127.0.0.1:8000/api";
@@ -71,7 +71,15 @@ export default function Userpage() {
 
   const handleNewDogChange = (index, field, value) => {
     const updated = newDogs.map((dog, i) =>
-      i === index ? { ...dog, [field]: value } : dog
+      i === index
+        ? {
+            ...dog,
+            [field]: value,
+            nameError: field === "name" ? "" : dog.nameError,
+            breedError: field === "breed" ? "" : dog.breedError,
+            ageError: field === "age" ? "" : dog.ageError,
+          }
+        : dog
     );
     setNewDogs(updated);
   };
@@ -103,8 +111,34 @@ export default function Userpage() {
       setUser(updatedUser);
       window.dispatchEvent(new Event("userChanged"));
 
+      let hasError = false;
+      const validatedDogs = newDogs.map((dog) => {
+        const errors = { nameError: "", breedError: "", ageError: "" };
+        if (!dog.name.trim()) {
+          errors.nameError = "Name is required.";
+          hasError = true;
+        }
+        if (!dog.breed.trim()) {
+          errors.breedError = "Breed is required.";
+          hasError = true;
+        }
+        if (!dog.age) {
+          errors.ageError = "Age is required.";
+          hasError = true;
+        } else if (parseInt(dog.age) > 30) {
+          errors.ageError = "Age cannot exceed 30.";
+          hasError = true;
+        }
+        return { ...dog, ...errors };
+      });
+
+      if (hasError) {
+        setNewDogs(validatedDogs);
+        setSaving(false);
+        return;
+      }
+
       for (const dog of newDogs) {
-        if (!dog.name || !dog.breed || !dog.age) continue;
 
         const res = await fetch(`${API_BASE}/dogs/create/`, {
           method: "POST",
@@ -119,8 +153,7 @@ export default function Userpage() {
         });
 
         if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Could not save dog");
+          throw new Error("Could not save dog");
         }
       }
 
@@ -162,6 +195,12 @@ export default function Userpage() {
               </h2>
               <p className="userpage__username">@{user.username}</p>
             </div>
+            {user.is_admin && (
+              <div className="userpage__adminSection">
+                <span className="userpage__adminBadge">Admin</span>
+                <Link className="userpage__addAdLink" to="/upload_ad">+ Add Ad</Link>
+              </div>
+            )}
           </div>
 
           {/* Navn */}
@@ -225,7 +264,7 @@ export default function Userpage() {
             <div className="userpage__dogCard" key={`new-${index}`}>
               <div className="userpage__dogCardHeader">
                 <span className="userpage__dogCardTitle">
-                  {dog.name || `Ny hund ${index + 1}`}
+                  {dog.name || `New Dog`}
                 </span>
               </div>
               <div className="userpage__dogImageSection">
@@ -241,7 +280,7 @@ export default function Userpage() {
                   </div>
                 )}
                 <label className="userpage__dogImageBtn">
-                  {dog.imagePreview ? "Bytt bilde" : "Last opp bilde"}
+                  {dog.imagePreview ? "Change Picture" : "Upload picture"}
                   <input
                     type="file"
                     accept="image/*"
@@ -261,6 +300,9 @@ export default function Userpage() {
                     }
                     placeholder="Buddy"
                   />
+                  {dog.nameError && (
+                    <span className="userpage__fieldError">{dog.nameError}</span>
+                  )}
                 </div>
                 <div className="userpage__section">
                   <label className="userpage__label">Breed</label>
@@ -272,6 +314,9 @@ export default function Userpage() {
                     }
                     placeholder="Golden Retriever"
                   />
+                  {dog.breedError && (
+                    <span className="userpage__fieldError">{dog.breedError}</span>
+                  )}
                 </div>
               </div>
               <div className="userpage__section userpage__ageField">
@@ -287,6 +332,9 @@ export default function Userpage() {
                   }
                   placeholder="3"
                 />
+                {dog.ageError && (
+                  <span className="userpage__fieldError">{dog.ageError}</span>
+                )}
               </div>
               <span
                   className="userpage__removeDogBtn"
