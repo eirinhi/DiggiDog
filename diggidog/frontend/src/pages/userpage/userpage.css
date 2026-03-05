@@ -281,3 +281,10 @@
 .userpage__message--error {
   color: #dc2626;
 }
+
+.userpage__fieldError {
+  display: block;
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+}

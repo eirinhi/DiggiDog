@@ -195,13 +195,20 @@ def create_dog(request):
 
     picture = request.data.get("picture", "")
 
-    dog = Dog.objects.create(
+    dog = Dog(
         name=name,
         age=age,
         breed=breed,
         owner=owner,
         picture=picture if picture else None,
     )
+
+    try:
+        dog.full_clean()
+    except ValidationError as e:
+        return Response({"error": e.message_dict}, status=400)
+
+    dog.save()
 
     return Response({
         "message": "Dog added",

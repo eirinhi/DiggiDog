@@ -79,9 +79,18 @@ class Dog(models.Model):
 
     picture = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if not self.name.strip():
+            raise ValidationError({"name": "Name cannot be blank."})
+        if not self.breed.strip():
+            raise ValidationError({"breed": "Breed cannot be blank."})
+        if self.age > 30:
+            raise ValidationError({"age": "Age cannot exceed 30."})
+
 class Ad(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     file = models.FileField(upload_to="images/")
 
-    def __str__(self):
-        return self.file

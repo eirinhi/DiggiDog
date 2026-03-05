@@ -53,7 +53,7 @@ export default function Navbar() {
                   <circle cx="12" cy="8" r="4" />
                   <path d="M20 21a8 8 0 0 0-16 0" />
                 </svg>
-                Profil
+                Profile
               </Link>
               <Link className="navBar__login" to="/" onClick={() => {
                 handleLogout();
