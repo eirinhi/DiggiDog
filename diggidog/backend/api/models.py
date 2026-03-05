@@ -6,7 +6,6 @@ from django.utils import timezone
 from datetime import timedelta
 
 
-# Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self, username, name, password=None):
         if not username:
@@ -89,6 +88,42 @@ class Dog(models.Model):
             raise ValidationError({"breed": "Breed cannot be blank."})
         if self.age > 30:
             raise ValidationError({"age": "Age cannot exceed 30."})
+
+class Participant(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="participants")
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name="participants")
+    dog = models.ForeignKey('Dog', on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = ("competition", "user", "dog")
+
+    def __str__(self):
+        return f"Participant(user={self.user.username}, comp={self.competition.name}, dog={self.dog.name})"
+
+    def clean(self):
+        if self.competition and self.competition.max_participants is not None:
+            qs = Participant.objects.filter(competition=self.competition)
+            if not self.pk:
+                current_count = qs.count()
+            else:
+                current_count = qs.exclude(pk=self.pk).count()
+            if current_count >= self.competition.max_participants:
+                raise ValidationError("The competition has reached its maximum number of participants.")
+
+        if self.dog and self.user and self.dog.owner != self.user:
+            raise ValidationError("The dog does not belong to this user.")
+
+        if self.competition and self.user and self.dog:
+            duplicate = Participant.objects.filter(
+                competition=self.competition,
+                user=self.user,
+                dog=self.dog,
+            )
+            if self.pk:
+                duplicate = duplicate.exclude(pk=self.pk)
+            if duplicate.exists():
+                raise ValidationError("This dog has already been entered.")    
 
 class Ad(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
