@@ -129,3 +129,11 @@ class Ad(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     file = models.FileField(upload_to="images/")
 
+
+class Like(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    participant = models.ForeignKey(Dog, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'participant')
