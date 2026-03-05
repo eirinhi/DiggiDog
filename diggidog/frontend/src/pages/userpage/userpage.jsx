@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./userpage.css";
 
 const API_BASE = "http://127.0.0.1:8000/api";
@@ -195,6 +195,12 @@ export default function Userpage() {
               </h2>
               <p className="userpage__username">@{user.username}</p>
             </div>
+            {user.is_admin && (
+              <div className="userpage__adminSection">
+                <span className="userpage__adminBadge">Admin</span>
+                <Link className="userpage__addAdLink" to="/upload_ad">+ Add Ad</Link>
+              </div>
+            )}
           </div>
 
           {/* Navn */}
