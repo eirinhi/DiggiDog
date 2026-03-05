@@ -91,7 +91,7 @@ class Participant(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="participants")
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name="participants")
-    dog = models.ForeignKey(Dog, on_delete=models.CASCADE)
+    dog = models.ForeignKey('Dog', on_delete=models.CASCADE, null=True)
 
     class Meta:
         unique_together = ("competition", "user", "dog")
