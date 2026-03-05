@@ -124,37 +124,39 @@ export default function CompOverview() {
         const imgUrl = toImageUrl(c.picture);
 
         return (
-          <article key={c.id} className="comp-card">
-            {imgUrl && (
-              <img
-                className="comp-card-img"
-                src={imgUrl}
-                alt={`${c.name} cover`}
-                loading="lazy"
-              />
-            )}
+          <Link key={c.id} to={`/competition/${c.id}`} className="comp-card-link">
+            <article className="comp-card">
+              {imgUrl && (
+                <img
+                  className="comp-card-img"
+                  src={imgUrl}
+                  alt={`${c.name} cover`}
+                  loading="lazy"
+                />
+              )}
 
-            <div className="comp-card-top">
-              <h3 className="comp-card-title">{c.name}</h3>
-            </div>
+              <div className="comp-card-top">
+                <h3 className="comp-card-title">{c.name}</h3>
+              </div>
 
-            <p className="comp-card-desc">{c.description || "No description"}</p>
+              <p className="comp-card-desc">{c.description || "No description"}</p>
 
-            <dl className="comp-meta">
-              <div className="comp-meta-row">
-                <dt>Start</dt>
-                <dd>{formatDate(c.start_date)}</dd>
-              </div>
-              <div className="comp-meta-row">
-                <dt>End</dt>
-                <dd>{formatDate(c.end_date)}</dd>
-              </div>
-              <div className="comp-meta-row">
-                <dt>Max participants</dt>
-                <dd>{c.max_participants ?? "-"}</dd>
-              </div>
-            </dl>
-          </article>
+              <dl className="comp-meta">
+                <div className="comp-meta-row">
+                  <dt>Start</dt>
+                  <dd>{formatDate(c.start_date)}</dd>
+                </div>
+                <div className="comp-meta-row">
+                  <dt>End</dt>
+                  <dd>{formatDate(c.end_date)}</dd>
+                </div>
+                <div className="comp-meta-row">
+                  <dt>Max participants</dt>
+                  <dd>{c.max_participants ?? "-"}</dd>
+                </div>
+              </dl>
+            </article>
+          </Link>
         );
       })}
         </div>
