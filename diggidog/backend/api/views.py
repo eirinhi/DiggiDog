@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .models import User, Competition, Participant
+from .models import User, Competition, Participant, Dog
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
@@ -155,7 +155,15 @@ def register_participant(request):
     except Competition.DoesNotExist:
         return Response({"error": "Competition not found"}, status=404)
     
-    participant = Participant(user=user, competition=competition, dog_identifier=dog_id)
+    try:
+        dog = Dog.objects.get(id=dog_id)
+    except Dog.DoesNotExist:
+        return Response({"error": "Dog not found"}, status=404)
+    
+    if dog.owner != user:
+        return Response({"error": "Dog does not belong to this user"}, status=400)
+
+    participant = Participant(user=user, competition=competition, dog=dog)
     try:
         participant.full_clean()
         participant.save()
@@ -168,7 +176,7 @@ def register_participant(request):
             "id": participant.id,
             "user_id": user.id,
             "competition_id": competition.id,
-            "dog_id": participant.dog_identifier
+            "dog_id": participant.dog.id
         }
     }, status=201)
 
@@ -183,7 +191,7 @@ def get_participant(request, competition_id):
         pts.append({
             "id": p.id,
             "user_id": p.user.id,
-            "dog_id": p.dog_identifier
+            "dog_id": p.dog.id
         })
     return Response(pts, status=200)
 
@@ -200,7 +208,13 @@ def update_participant(request, participant_id):
 
     dog_id = request.data.get("dog_id")
     if dog_id:
-        participant.dog_identifier = dog_id
+        try:
+            dog = Dog.objects.get(id=dog_id)
+        except Dog.DoesNotExist:
+            return Response({"error": "Dog not found"}, status=404)
+        if dog.owner != participant.user:
+            return Response({"error": "Dog does not belong to this user"}, status=400)
+        participant.dog = dog
 
     try:
         participant.full_clean()
@@ -214,6 +228,111 @@ def update_participant(request, participant_id):
             "id": participant.id,
             "user_id": participant.user.id,
             "competition_id": participant.competition.id,
-            "dog_id": participant.dog_identifier,
+            "dog_id": participant.dog.id,
         }
     }, status=200)
+
+@api_view(['PATCH'])
+def update_profile(request):
+    user_id = request.data.get("user_id")
+    if not user_id:
+        return Response({"error": "user_id required"}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+    if "name" in request.data:
+        user.name = request.data["name"]
+    if "bio" in request.data:
+        user.bio = request.data["bio"]
+    user.save()
+
+    return Response({
+        "message": "Profile updated",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "name": user.name,
+            "bio": user.bio,
+            "is_admin": user.is_admin,
+            "data_joined": user.date_joined.timestamp()
+        }
+    }, status=200)
+
+@api_view(['POST'])
+def create_dog(request):
+    name = request.data.get("name")
+    age = request.data.get("age")
+    breed = request.data.get("breed")
+    owner_id = request.data.get("owner")
+
+    if not name or not age or not breed or not owner_id:
+        return Response({"error": "Missing required fields"}, status=400)
+
+    try:
+        owner = User.objects.get(id=owner_id)
+    except User.DoesNotExist:
+        return Response({"error": "Owner not found"}, status=404)
+
+    picture = request.data.get("picture", "")
+
+    dog = Dog(
+        name=name,
+        age=age,
+        breed=breed,
+        owner=owner,
+        picture=picture if picture else None,
+    )
+
+    try:
+        dog.full_clean()
+    except ValidationError as e:
+        return Response({"error": e.message_dict}, status=400)
+
+    dog.save()
+
+    return Response({
+        "message": "Dog added",
+        "dog": {
+            "id": dog.id,
+            "name": dog.name,
+            "age": dog.age,
+            "breed": dog.breed,
+            "owner": dog.owner.id,
+            "picture": dog.picture,
+        }
+    }, status=201)
+
+@api_view(['DELETE'])
+def delete_dog(request, dog_id):
+    try:
+        dog = Dog.objects.get(id=dog_id)
+    except Dog.DoesNotExist:
+        return Response({"error": "Dog not found"}, status=404)
+
+    dog.delete()
+    return Response({"message": "Dog deleted"}, status=200)
+
+@api_view(['GET'])
+def get_dogs(request):
+    owner_id = request.query_params.get("owner")
+
+    if owner_id:
+        dogs = Dog.objects.filter(owner_id=owner_id)
+    else:
+        dogs = Dog.objects.all()
+
+    result = []
+    for dog in dogs:
+        result.append({
+            "id": dog.id,
+            "name": dog.name,
+            "age": dog.age,
+            "breed": dog.breed,
+            "owner": dog.owner.id,
+            "picture": dog.picture,
+        })
+
+    return Response(result, status=200)

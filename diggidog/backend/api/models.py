@@ -67,17 +67,37 @@ class Competition(models.Model):
         if not (1 <= self.max_participants <= 20):
             raise ValidationError({"max_participants": "Number of participants must be between 1 and 20."})
 
+class Dog(models.Model): 
+    id = models.BigAutoField(auto_created= True, primary_key=True)
+    name = models.CharField(max_length=100)
+    breed = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    picture = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if not self.name.strip():
+            raise ValidationError({"name": "Name cannot be blank."})
+        if not self.breed.strip():
+            raise ValidationError({"breed": "Breed cannot be blank."})
+        if self.age > 30:
+            raise ValidationError({"age": "Age cannot exceed 30."})
+
 class Participant(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="participants")
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name="participants")
-    dog_identifier = models.CharField(max_length=100, help_text="Identifier for the dog entered by the user")
+    dog = models.ForeignKey(Dog, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ("competition", "user", "dog_identifier")
+        unique_together = ("competition", "user", "dog")
 
     def __str__(self):
-        return f"Participant(user={self.user.username}, comp={self.competition.name}, dog={self.dog_identifier})"
+        return f"Participant(user={self.user.username}, comp={self.competition.name}, dog={self.dog.name})"
 
     def clean(self):
         if self.competition and self.competition.max_participants is not None:
@@ -89,11 +109,14 @@ class Participant(models.Model):
             if current_count >= self.competition.max_participants:
                 raise ValidationError("The competition has reached its maximum number of participants.")
 
-        if self.competition and self.user and self.dog_identifier:
+        if self.dog and self.user and self.dog.owner != self.user:
+            raise ValidationError("The dog does not belong to this user.")
+
+        if self.competition and self.user and self.dog:
             duplicate = Participant.objects.filter(
                 competition=self.competition,
                 user=self.user,
-                dog_identifier=self.dog_identifier,
+                dog=self.dog,
             )
             if self.pk:
                 duplicate = duplicate.exclude(pk=self.pk)
