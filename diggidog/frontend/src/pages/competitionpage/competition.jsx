@@ -126,6 +126,11 @@ export default function Competition_page() {
       return;
     }
 
+    if (competition && participants.length >= competition.max_participants) {
+      alert("This competition has reached the maximum number of dogs.");
+      return;
+    }
+
     try {
       const res = await fetch(`${API_BASE}/dogs/?owner=${user.id}`, {
         method: "GET",
@@ -299,9 +304,13 @@ export default function Competition_page() {
             <button
               className="participate-btn"
               onClick={handleParticipate}
-              disabled={!loggedIn}
+              disabled={!loggedIn || (competition && participants.length >= competition.max_participants)}
             >
-              {loggedIn ? "Participate" : "Login to Participate"}
+              {loggedIn
+                ? (competition && participants.length >= competition.max_participants
+                    ? "The Competition is Full"
+                    : "Participate")
+                : "Login to Participate"}
             </button>
           </div>
         </div>
