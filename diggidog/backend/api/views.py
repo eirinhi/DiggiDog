@@ -348,6 +348,26 @@ def get_dogs(request):
 
     return Response(result, status=200)
 
+@api_view(['GET'])
+def get_dog(request, dog_id):
+    try:
+        dog = Dog.objects.get(id=dog_id)
+    except Dog.DoesNotExist:
+        return Response({"error": "Dog not found"}, status=404)
+
+    # Get owner name
+    owner_name = dog.owner.name if dog.owner else "Unknown"
+
+    return Response({
+        "id": dog.id,
+        "name": dog.name,
+        "age": dog.age,
+        "breed": dog.breed,
+        "owner": dog.owner.id,
+        "owner_name": owner_name,
+        "picture": dog.picture,
+    }, status=200)
+
 
 @api_view(['POST'])
 def upload_ad(request):

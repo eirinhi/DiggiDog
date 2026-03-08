@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./competition.css";
 
-const API_BASE = "http://127.0.0.1:8000/api";
-const DJANGO_HOST = "http://127.0.0.1:8000";
+const API_BASE = "http://127.0.0.1:8001/api";
+const DJANGO_HOST = "http://127.0.0.1:8001";
 
 function toImageUrl(picture) {
   if (!picture) return null;
+  if (picture.startsWith("data:")) return picture;
   if (picture.startsWith("http")) return picture;
   return `${DJANGO_HOST}${picture}`;
 }
@@ -26,6 +27,11 @@ export default function Competition_page() {
   const [error, setError] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [showParticipateModal, setShowParticipateModal] = useState(false);
+  const [userDogs, setUserDogs] = useState([]);
+  const [selectedDog, setSelectedDog] = useState(null);
+  const [participateLoading, setParticipateLoading] = useState(false);
+  const [userParticipatingDogs, setUserParticipatingDogs] = useState([]);
 
   const checkUser = () => {
     const savedUser = localStorage.getItem("user");
@@ -120,7 +126,105 @@ export default function Competition_page() {
       return;
     }
 
-    alert("Participation feature coming soon!");
+    try {
+      const res = await fetch(`${API_BASE}/dogs/?owner=${user.id}`, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch your dogs");
+      }
+
+      const dogs = await res.json();
+      const participatingDogIds = participants.map(p => p.dog_id);
+      const availableDogs = dogs.filter(dog => !participatingDogIds.includes(dog.id));
+      const userParticipating = participants.filter(p => p.user_id === user.id).map(p => {
+        const dog = dogs.find(d => d.id === p.dog_id);
+        return dog ? { ...dog, participant_id: p.id } : null;
+      }).filter(Boolean);
+
+      setUserDogs(availableDogs);
+      setUserParticipatingDogs(userParticipating);
+      setSelectedDog(null);
+      setShowParticipateModal(true);
+    } catch (err) {
+      console.error("Error fetching dogs:", err);
+      alert("Failed to load your dogs. Please try again.");
+    }
+  };
+
+  const handleDogSelect = (dog) => {
+    setSelectedDog(dog);
+  };
+
+  const handleSubmitParticipation = async () => {
+    if (!selectedDog) {
+      alert("Please select a dog to participate");
+      return;
+    }
+
+    setParticipateLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/participants/register/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          competition_id: id,
+          dog_id: selectedDog.id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Successfully registered for the competition!");
+        setShowParticipateModal(false);
+        window.location.reload();
+      } else {
+        alert(`Error: ${data.error || "Failed to register"}`);
+      }
+    } catch (err) {
+      console.error("Error registering participant:", err);
+      alert("Failed to register. Please try again.");
+    } finally {
+      setParticipateLoading(false);
+    }
+  };
+
+  const handleRemoveParticipation = async (participantId) => {
+    if (!confirm("Are you sure you want to remove this dog from the competition?")) {
+      return;
+    }
+
+    setParticipateLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/participants/${participantId}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.ok) {
+        alert("Successfully removed from the competition!");
+        setShowParticipateModal(false);
+        window.location.reload();
+      } else {
+        const data = await res.json();
+        alert(`Error: ${data.error || "Failed to remove"}`);
+      }
+    } catch (err) {
+      console.error("Error removing participant:", err);
+      alert("Failed to remove. Please try again.");
+    } finally {
+      setParticipateLoading(false);
+    }
   };
 
   if (loading) {
@@ -230,6 +334,120 @@ export default function Competition_page() {
           </div>
         )}
       </div>
+
+      {/* Participation Modal */}
+      {showParticipateModal && (
+        <div className="modal-overlay" onClick={() => setShowParticipateModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Manage Your Participation</h2>
+              <button
+                className="modal-close"
+                onClick={() => setShowParticipateModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {/* Participating Dogs Section */}
+              {userParticipatingDogs.length > 0 && (
+                <div className="participating-section">
+                  <h3>Your Participating Dogs</h3>
+                  <div className="dogs-list">
+                    {userParticipatingDogs.map((dog) => (
+                      <div key={dog.id} className="dog-option participating">
+                        <div className="dog-option-content">
+                          {dog.picture && (
+                            <img
+                              src={toImageUrl(dog.picture)}
+                              alt={dog.name}
+                              className="dog-option-image"
+                            />
+                          )}
+                          <div className="dog-option-info">
+                            <h3>{dog.name}</h3>
+                            <p>Age: {dog.age}, Breed: {dog.breed}</p>
+                            <span className="participating-badge">Participating</span>
+                          </div>
+                          <button
+                            className="btn-remove"
+                            onClick={() => handleRemoveParticipation(dog.participant_id)}
+                            disabled={participateLoading}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Available Dogs Section */}
+              <div className="available-section">
+                <h3>Add More Dogs</h3>
+                {userDogs.length === 0 ? (
+                  <div className="no-dogs-message">
+                    <p>You don't have any additional dogs available to participate.</p>
+                    {userParticipatingDogs.length > 0 && (
+                      <p>All your other dogs are already registered for this competition.</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="dogs-selection">
+                    <p>Choose one of your dogs to enter in this competition:</p>
+                    <div className="dogs-list">
+                      {userDogs.map((dog) => (
+                        <div
+                          key={dog.id}
+                          className={`dog-option ${selectedDog?.id === dog.id ? 'selected' : ''}`}
+                          onClick={() => handleDogSelect(dog)}
+                        >
+                          <div className="dog-option-content">
+                            {dog.picture && (
+                              <img
+                                src={toImageUrl(dog.picture)}
+                                alt={dog.name}
+                                className="dog-option-image"
+                              />
+                            )}
+                            <div className="dog-option-info">
+                              <h3>{dog.name}</h3>
+                              <p>Age: {dog.age}, Breed: {dog.breed}</p>
+                            </div>
+                            <div className="dog-radio">
+                              <div className={`radio-circle ${selectedDog?.id === dog.id ? 'checked' : ''}`}>
+                                {selectedDog?.id === dog.id && <div className="radio-dot"></div>}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowParticipateModal(false)}
+              >
+                Close
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleSubmitParticipation}
+                disabled={!selectedDog || participateLoading || userDogs.length === 0}
+              >
+                {participateLoading ? "Registering..." : "Register Dog"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

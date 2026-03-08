@@ -3,13 +3,14 @@ import "./CompOverview.css";
 import Ad from "./components/Ad.jsx";
 import { Link } from "react-router-dom";
 
-const API_BASE = "http://127.0.0.1:8000/api"; 
+const API_BASE = "http://127.0.0.1:8001/api";
 
 
-const DJANGO_HOST = "http://127.0.0.1:8000";
+const DJANGO_HOST = "http://127.0.0.1:8001";
 
 function toImageUrl(picture) {
   if (!picture) return null;
+  if (picture.startsWith("data:")) return picture; // Base64 data URL
   if (picture.startsWith("http")) return picture;
   return `${DJANGO_HOST}${picture}`; // picture like "/media/competition_pics/..."
 }
