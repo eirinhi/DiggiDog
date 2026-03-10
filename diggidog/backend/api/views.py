@@ -1,7 +1,7 @@
 
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .models import User, Competition, Participant, Dog, Ad
+from .models import User, Competition, Participant, Dog, Ad, Comment
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
@@ -347,6 +347,74 @@ def get_dogs(request):
         })
 
     return Response(result, status=200)
+
+
+@api_view(['POST'])
+def create_comment(request):
+    user_id = request.data.get("user_id")
+    participant_id = request.data.get("participant_id")
+    text = request.data.get("text")
+
+    if not user_id or not participant_id or not text:
+        return Response({"error": "user_id, participant_id and text are required"}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+    try:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
+        return Response({"error": "Participant not found"}, status=404)
+
+    comment = Comment(user=user, participant=participant, text=text)
+
+    try:
+        comment.full_clean()
+        comment.save()
+    except ValidationError as e:
+        return Response({"error": e.message_dict if hasattr(e, 'message_dict') else str(e)}, status=400)
+
+    return Response({
+        "message": "Comment created",
+        "comment": {
+            "id": comment.id,
+            "user_id": user.id,
+            "participant_id": participant.id,
+            "text": comment.text,
+            "created_at": comment.created_at.isoformat(),
+        }
+    }, status=201)
+
+@api_view(['GET'])
+def get_comments(request, participant_id):
+    try:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
+        return Response({"error": "Participant not found"}, status=404)
+
+    result = []
+    for comment in participant.comments.all().order_by('-created_at'):
+        result.append({
+            "id": comment.id,
+            "user_id": comment.user.id,
+            "username": comment.user.username,
+            "text": comment.text,
+            "created_at": comment.created_at.isoformat(),
+        })
+
+    return Response(result, status=200)
+
+@api_view(['DELETE'])
+def delete_comment(request, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return Response({"error": "Comment not found"}, status=404)
+
+    comment.delete()
+    return Response({"message": "Comment deleted"}, status=200)
 
 
 @api_view(['POST'])

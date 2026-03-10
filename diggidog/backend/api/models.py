@@ -129,3 +129,17 @@ class Ad(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     file = models.FileField(upload_to="images/")
 
+
+class Comment(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True)
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    text = models.CharField(max_length=250)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.participant}"
+
+    def clean(self):
+        if not self.text.strip():
+            raise ValidationError({"text": "Comment text cannot be blank."})
