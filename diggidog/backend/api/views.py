@@ -1,7 +1,7 @@
 
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .models import User, Competition, Participant, Dog, Ad
+from .models import Like, User, Competition, Ad, Dog, Participant
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
@@ -377,3 +377,69 @@ def get_ad(request):
     })
 
 
+@api_view(['POST'])
+def like_participant(request):
+    user_id = request.data.get("user_id")
+    participant_id = request.data.get("participant_id")
+
+    if not user_id or not participant_id:
+        return Response({"error": "user_id and participant_id required"}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+    try:
+        participant = Dog.objects.get(id=participant_id)
+    except Dog.DoesNotExist:
+        return Response({"error": "Participant not found"}, status=404)
+
+    like, created = Like.objects.get_or_create(user=user, participant=participant)
+
+    if not created:
+        return Response({"message": "Already liked"}, status=200)
+
+    return Response({
+        "message": "Participant liked",
+        "user_id": like.user.id,
+    }, status=201)
+
+
+@api_view(['GET'])
+def get_likes(request):
+    participant_id = request.GET.get("participant_id")
+    try:
+        participant = Dog.objects.get(id=participant_id)
+    except Dog.DoesNotExist:
+        return Response({"error": "Participant not found"}, status=404)
+
+    likes = Like.objects.filter(participant=participant)
+    likes_data = [{"user_id": like.user.id, "username": like.user.username} for like in likes]
+
+    return Response({"likes": likes_data}, status=200)
+
+@api_view(['DELETE'])
+def unlike_participant(request):
+    user_id = request.data.get("user_id")
+    participant_id = request.data.get("participant_id")
+
+    if not user_id or not participant_id:
+        return Response({"error": "user_id and participant_id required"}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+    try:
+        participant = Dog.objects.get(id=participant_id)
+    except Dog.DoesNotExist:
+        return Response({"error": "Participant not found"}, status=404)
+
+    try:
+        like = Like.objects.get(user=user, participant=participant)
+        like.delete()
+        return Response({"message": "Participant unliked"}, status=200)
+    except Like.DoesNotExist:
+        return Response({"error": "Like not found"}, status=404)

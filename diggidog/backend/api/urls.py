@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import hello_world, register, login, create_competition, get_competitions, register_participant, get_participant, update_participant, update_profile, create_dog, get_dogs, delete_dog, get_ad, upload_ad
+from .views import get_likes, hello_world, like_participant, register, login, create_competition, get_competitions, register_participant, get_participant, unlike_participant, update_participant, update_profile, create_dog, get_dogs, delete_dog, get_ad, upload_ad
 
 urlpatterns = [
     path('hello/', hello_world),
@@ -15,5 +15,8 @@ urlpatterns = [
     path('dogs/create/', create_dog, name='create_dog'),
     path('dogs/<int:dog_id>/delete/', delete_dog, name='delete_dog'),
     path('get_ad/', get_ad, name='get_ad'),
-    path('upload_ad/', upload_ad, name='upload_ad')
+    path('upload_ad/', upload_ad, name='upload_ad'),
+    path('like_participant/', like_participant, name='like_participant'),
+    path('get_likes/', get_likes, name='get_likes'),
+    path('unlike_participant/', unlike_participant, name='unlike_participant'),
 ]
