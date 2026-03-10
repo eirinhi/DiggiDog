@@ -12,6 +12,7 @@
     color: #ffffff;
     display: flex;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 12px;
 }
   
 .hero__title{
@@ -42,5 +43,6 @@
     max-height: 600px;
     height: auto;
     display: block;
+    border-radius: 8px;
 }
   

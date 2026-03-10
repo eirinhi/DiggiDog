@@ -3,12 +3,22 @@ from django.urls import reverse
 from rest_framework import status
 from api.models import Ad
 from django.core.files.uploadedfile import SimpleUploadedFile
+import os
 
 class AdTests(APITestCase):
 
     def setUp(self):
         self.upload_url = reverse("upload_ad")
         self.get_url = reverse("get_ad")
+        self.created_files = []
+
+    def tearDown(self):
+        for ad in Ad.objects.all():
+            if ad.file and os.path.isfile(ad.file.path):
+                os.remove(ad.file.path)
+            ad.delete()
+
+        self.created_files.clear()
 
 
     def test_get_ad_empty_database(self):
