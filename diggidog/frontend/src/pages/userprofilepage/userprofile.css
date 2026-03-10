@@ -1,0 +1,175 @@
+.userProfile {
+  padding-top: 140px;
+  padding-bottom: 60px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: #FAF9F6;
+}
+
+.userProfile__container {
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 24px;
+}
+
+.userProfile__loading,
+.userProfile__error {
+  text-align: center;
+  font-size: 16px;
+  padding: 40px 20px;
+}
+
+.userProfile__error {
+  background-color: #fee;
+  color: #c33;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.userProfile__card {
+  background: #ffffff;
+  border: 1px solid #d6dbe6;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(11, 31, 58, 0.08);
+}
+
+.userProfile__profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.userProfile__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #0b1f3a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.userProfile__profileInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.userProfile__displayName {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0b1f3a;
+  margin: 0;
+}
+
+.userProfile__username {
+  font-size: 16px;
+  color: #888;
+  margin: 4px 0 0;
+}
+
+.userProfile__section {
+  margin-bottom: 20px;
+}
+
+.userProfile__label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.userProfile__value {
+  font-size: 18px;
+  color: #111827;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.userProfile__separator {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 28px 0;
+}
+
+.userProfile__dogsTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0b1f3a;
+  margin: 0 0 16px 0;
+}
+
+.userProfile__noDogs {
+  text-align: center;
+  font-size: 16px;
+  color: #999;
+  padding: 40px 20px;
+}
+
+.userProfile__dogsList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.userProfile__dogCard {
+  background: #f8f9fb;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.userProfile__dogImage {
+  width: 100%;
+  max-height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 12px;
+}
+
+.userProfile__dogInfo {
+  padding: 16px;
+}
+
+.userProfile__dogName {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0b1f3a;
+  margin: 0 0 6px 0;
+}
+
+.userProfile__dogBreed {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.userProfile__dogAge {
+  font-size: 15px;
+  color: #999;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .userProfile__container {
+    padding: 0 16px;
+  }
+
+  .userProfile__card {
+    padding: 20px;
+  }
+
+  .userProfile__dogsList {
+    grid-template-columns: 1fr;
+  }
+}

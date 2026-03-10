@@ -11,6 +11,8 @@ import CC from './components/CreateCompetitionForm.jsx'
 import Userpage from "./pages/userpage/userpage.jsx"
 import AdUploadForm from './components/AdUploadForm.jsx'
 import Competition_page from './pages/competitionpage/competition.jsx'
+import SearchPage from './pages/searchpage/search.jsx'
+import UserProfile from './pages/userprofilepage/userprofile.jsx'
 
 // Fikk hjelp av KI for å passe på at siden alltid var på toppen ved React-route 
 function ScrollToTop() {
@@ -35,6 +37,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/comps" element={<CompOverview />} /> 
         <Route path="/upload_ad" element={<AdUploadForm />} />
         <Route path="/competition/:id" element={<Competition_page />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/user/:userId" element={<UserProfile />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

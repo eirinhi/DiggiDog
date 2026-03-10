@@ -1,6 +1,7 @@
 
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from django.db import models
 from .models import User, Competition, Participant, Dog, Ad, Comment, Like
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -526,3 +527,38 @@ def unlike_participant(request):
         return Response({"message": "Participant unliked"}, status=200)
     except Like.DoesNotExist:
         return Response({"error": "Like not found"}, status=404)
+
+
+@api_view(['GET'])
+def search_users(request):
+    query = request.query_params.get("q", "").strip()
+
+    if not query:
+        return Response({"error": "Search query is required"}, status=400)
+
+    users = User.objects.filter(
+        models.Q(username__icontains=query) | models.Q(name__icontains=query)
+    ).values('id', 'username', 'name', 'bio')
+
+    users_list = list(users)
+
+    return Response({
+        "results": users_list
+    }, status=200)
+
+
+@api_view(['GET'])
+def get_user_by_id(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+    return Response({
+        "id": user.id,
+        "username": user.username,
+        "name": user.name,
+        "bio": user.bio,
+        "is_admin": user.is_admin,
+        "date_joined": user.date_joined.timestamp()
+    }, status=200)
