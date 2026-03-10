@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./competition.css";
 
-const API_BASE = "http://127.0.0.1:8001/api";
-const DJANGO_HOST = "http://127.0.0.1:8001";
+const API_BASE = "http://127.0.0.1:8000/api";
+const DJANGO_HOST = "http://127.0.0.1:8000";
 
 function toImageUrl(picture) {
   if (!picture) return null;
