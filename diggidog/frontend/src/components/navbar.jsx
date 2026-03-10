@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   const checkUser = () => {
     const savedUser = localStorage.getItem("user");
@@ -12,8 +13,10 @@ export default function Navbar() {
     if (savedUser) {
       setLoggedIn(true);
       const user = JSON.parse(savedUser);
+      setUser(user);
     } else {
       setLoggedIn(false);
+      setUser(null);
     }
   };
 
@@ -34,7 +37,9 @@ export default function Navbar() {
         <div className="navBar__box navBar__boxleft">
 
           <Link className="navBar__comps" to="/comps">Competitions</Link>
-          <a href="http://127.0.0.1:8000/admin" className="navBar__comps admin">Admin</a>
+          {user?.is_admin && (
+            <a href="http://127.0.0.1:8000/admin" className="navBar__comps admin">Admin</a>
+          )}
         </div>
         <div className="navBar__box navBar__boxcenter">
           <Link className="navBar__logo" to="/"><img className="navBar__logoImage" src={logo} alt="DiggiDog"/></Link>
