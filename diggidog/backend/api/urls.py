@@ -1,8 +1,7 @@
 from django.urls import path
-from .views import get_likes, hello_world, like_participant, register, login, create_competition, get_competitions, register_participant, get_participant, unlike_participant, update_participant, update_profile, create_dog, get_dogs, delete_dog, get_ad, upload_ad
+from .views import register, login, create_competition, get_competitions, register_participant, get_participant, update_participant, update_profile, create_dog, get_dogs, delete_dog, get_ad, upload_ad, create_comment, get_comments, delete_comment, get_likes, like_participant, unlike_participant
 
 urlpatterns = [
-    path('hello/', hello_world),
     path('register/', register, name='register'),
     path('login/', login, name='login'),
     path('create_comp/', create_competition, name='create_competition'),
@@ -16,6 +15,9 @@ urlpatterns = [
     path('dogs/<int:dog_id>/delete/', delete_dog, name='delete_dog'),
     path('get_ad/', get_ad, name='get_ad'),
     path('upload_ad/', upload_ad, name='upload_ad'),
+    path('comments/create/', create_comment, name='create_comment'),
+    path('participants/<int:participant_id>/comments/', get_comments, name='get_comments'),
+    path('comments/<int:comment_id>/delete/', delete_comment, name='delete_comment'),
     path('like_participant/', like_participant, name='like_participant'),
     path('get_likes/', get_likes, name='get_likes'),
     path('unlike_participant/', unlike_participant, name='unlike_participant'),
