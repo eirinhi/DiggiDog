@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import hello_world, register, login, create_competition, get_competitions, register_participant, get_participant, update_participant, update_profile, create_dog, get_dogs, delete_dog, get_dog, get_ad, upload_ad
-
+from .views import register, login, create_competition, get_competitions, register_participant, get_participant, update_participant, update_profile, create_dog, get_dogs, get_dog, delete_dog, get_ad, upload_ad, create_comment, get_comments, delete_comment, get_likes, like_participant, unlike_participant
 
 urlpatterns = [
     path('register/', register, name='register'),
