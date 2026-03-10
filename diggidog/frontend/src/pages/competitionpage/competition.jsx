@@ -126,8 +126,9 @@ export default function Competition_page() {
       return;
     }
 
-    if (competition && participants.length >= competition.max_participants) {
-      alert("This competition has reached the maximum number of dogs.");
+    const userHasParticipatingDogs = participants.some(p => p.user_id === user.id);
+    if (competition && participants.length >= competition.max_participants && !userHasParticipatingDogs) {
+      alert("This competition has reached the maximum number of dogs and you don't have any dogs entered.");
       return;
     }
 
@@ -304,11 +305,13 @@ export default function Competition_page() {
             <button
               className="participate-btn"
               onClick={handleParticipate}
-              disabled={!loggedIn || (competition && participants.length >= competition.max_participants)}
+              disabled={!loggedIn || (competition && participants.length >= competition.max_participants && !participants.some(p => p.user_id === user?.id))}
             >
               {loggedIn
                 ? (competition && participants.length >= competition.max_participants
-                    ? "The Competition is Full"
+                    ? (participants.some(p => p.user_id === user?.id)
+                        ? "Manage Participation"
+                        : "Competition Full")
                     : "Participate")
                 : "Login to Participate"}
             </button>
@@ -349,7 +352,11 @@ export default function Competition_page() {
         <div className="modal-overlay" onClick={() => setShowParticipateModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Manage Your Participation</h2>
+              <h2>
+                {competition && participants.length >= competition.max_participants
+                  ? "Manage Your Participation"
+                  : "Select a Dog to Participate"}
+              </h2>
               <button
                 className="modal-close"
                 onClick={() => setShowParticipateModal(false)}
@@ -393,50 +400,60 @@ export default function Competition_page() {
                 </div>
               )}
 
-              {/* Available Dogs Section */}
-              <div className="available-section">
-                <h3>Add More Dogs</h3>
-                {userDogs.length === 0 ? (
-                  <div className="no-dogs-message">
-                    <p>You don't have any additional dogs available to participate.</p>
-                    {userParticipatingDogs.length > 0 && (
-                      <p>All your other dogs are already registered for this competition.</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="dogs-selection">
-                    <p>Choose one of your dogs to enter in this competition:</p>
-                    <div className="dogs-list">
-                      {userDogs.map((dog) => (
-                        <div
-                          key={dog.id}
-                          className={`dog-option ${selectedDog?.id === dog.id ? 'selected' : ''}`}
-                          onClick={() => handleDogSelect(dog)}
-                        >
-                          <div className="dog-option-content">
-                            {dog.picture && (
-                              <img
-                                src={toImageUrl(dog.picture)}
-                                alt={dog.name}
-                                className="dog-option-image"
-                              />
-                            )}
-                            <div className="dog-option-info">
-                              <h3>{dog.name}</h3>
-                              <p>Age: {dog.age}, Breed: {dog.breed}</p>
-                            </div>
-                            <div className="dog-radio">
-                              <div className={`radio-circle ${selectedDog?.id === dog.id ? 'checked' : ''}`}>
-                                {selectedDog?.id === dog.id && <div className="radio-dot"></div>}
+              {/* Available Dogs Section - Only show if competition not at max capacity */}
+              {(!competition || participants.length < competition.max_participants) && (
+                <div className="available-section">
+                  <h3>Add More Dogs</h3>
+                  {userDogs.length === 0 ? (
+                    <div className="no-dogs-message">
+                      <p>You don't have any additional dogs available to participate.</p>
+                      {userParticipatingDogs.length > 0 && (
+                        <p>All your other dogs are already registered for this competition.</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="dogs-selection">
+                      <p>Choose one of your dogs to enter in this competition:</p>
+                      <div className="dogs-list">
+                        {userDogs.map((dog) => (
+                          <div
+                            key={dog.id}
+                            className={`dog-option ${selectedDog?.id === dog.id ? 'selected' : ''}`}
+                            onClick={() => handleDogSelect(dog)}
+                          >
+                            <div className="dog-option-content">
+                              {dog.picture && (
+                                <img
+                                  src={toImageUrl(dog.picture)}
+                                  alt={dog.name}
+                                  className="dog-option-image"
+                                />
+                              )}
+                              <div className="dog-option-info">
+                                <h3>{dog.name}</h3>
+                                <p>Age: {dog.age}, Breed: {dog.breed}</p>
+                              </div>
+                              <div className="dog-radio">
+                                <div className={`radio-circle ${selectedDog?.id === dog.id ? 'checked' : ''}`}>
+                                  {selectedDog?.id === dog.id && <div className="radio-dot"></div>}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
+
+              {/* Show message when at max capacity and no dogs to remove */}
+              {competition && participants.length >= competition.max_participants && userParticipatingDogs.length === 0 && (
+                <div className="no-dogs-message">
+                  <p>This competition has reached the maximum number of dogs.</p>
+                  <p>You don't have any dogs participating that you can remove.</p>
+                </div>
+              )}
             </div>
 
             <div className="modal-footer">
@@ -446,13 +463,15 @@ export default function Competition_page() {
               >
                 Close
               </button>
-              <button
-                className="btn-primary"
-                onClick={handleSubmitParticipation}
-                disabled={!selectedDog || participateLoading || userDogs.length === 0}
-              >
-                {participateLoading ? "Registering..." : "Register Dog"}
-              </button>
+              {(!competition || participants.length < competition.max_participants) && (
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmitParticipation}
+                  disabled={!selectedDog || participateLoading || userDogs.length === 0}
+                >
+                  {participateLoading ? "Registering..." : "Register Dog"}
+                </button>
+              )}
             </div>
           </div>
         </div>
