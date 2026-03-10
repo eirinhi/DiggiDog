@@ -474,8 +474,8 @@ def like_participant(request):
         return Response({"error": "User not found"}, status=404)
 
     try:
-        participant = Dog.objects.get(id=participant_id)
-    except Dog.DoesNotExist:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
         return Response({"error": "Participant not found"}, status=404)
 
     like, created = Like.objects.get_or_create(user=user, participant=participant)
@@ -493,8 +493,8 @@ def like_participant(request):
 def get_likes(request):
     participant_id = request.GET.get("participant_id")
     try:
-        participant = Dog.objects.get(id=participant_id)
-    except Dog.DoesNotExist:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
         return Response({"error": "Participant not found"}, status=404)
 
     likes = Like.objects.filter(participant=participant)
@@ -516,8 +516,8 @@ def unlike_participant(request):
         return Response({"error": "User not found"}, status=404)
 
     try:
-        participant = Dog.objects.get(id=participant_id)
-    except Dog.DoesNotExist:
+        participant = Participant.objects.get(id=participant_id)
+    except Participant.DoesNotExist:
         return Response({"error": "Participant not found"}, status=404)
 
     try:

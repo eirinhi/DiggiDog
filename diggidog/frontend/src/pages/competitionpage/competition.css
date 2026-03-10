@@ -29,13 +29,6 @@
   align-items: start;
 }
 
-@media (max-width: 768px) {
-  .competition-content {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-}
-
 .competition-left {
   background: rgba(255, 255, 255, 0.95);
   padding: 30px;
@@ -267,17 +260,6 @@
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .modal-header {
@@ -579,4 +561,236 @@
 .btn-primary:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
+}
+
+.dog-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-top: 1px solid #ecf0f1;
+}
+
+.action-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7f8c8d;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.action-icon-btn:hover {
+  color: #34495e;
+}
+
+.action-icon-btn.liked {
+  color: #e74c3c;
+}
+
+.action-icon-btn.liked:hover {
+  color: #c0392b;
+}
+
+.action-count {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.comment-modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+  position: relative;
+}
+
+.comment-modal-content > .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.85);
+  width: 36px;
+  height: 36px;
+  font-size: 1.6rem;
+}
+
+.comment-modal-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 80vh;
+  max-height: 85vh;
+}
+
+.comment-modal-image-section {
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  overflow: hidden;
+}
+
+.comment-modal-dog-image {
+  width: 100%;
+  flex: 1;
+  object-fit: cover;
+  display: block;
+  min-height: 0;
+}
+
+.comment-modal-no-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1.2rem;
+  background: #1a1a1a;
+}
+
+.comment-modal-dog-info {
+  padding: 12px 16px;
+  background: #1a1a1a;
+  color: white;
+}
+
+.comment-modal-dog-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.comment-modal-dog-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.comment-modal-comments-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.comments-title {
+  margin: 0;
+  padding: 16px 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  border-bottom: 1px solid #ecf0f1;
+  flex-shrink: 0;
+}
+
+.comments-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 20px;
+}
+
+.comments-loading,
+.no-comments {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 30px 0;
+}
+
+.comment-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.comment-username {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #2c3e50;
+}
+
+.comment-delete-icon {
+  color: #bdc3c7;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.comment-delete-icon:hover {
+  color: #e74c3c;
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: #34495e;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: #bdc3c7;
+  margin-top: 4px;
+}
+
+.comment-input-area {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid #ecf0f1;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.comment-input:focus {
+  border-color: #3498db;
+}
+
+.comment-send-icon {
+  display: flex;
+  align-items: center;
+  color: #3498db;
+  cursor: pointer;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.comment-send-icon:hover {
+  color: #2980b9;
+}
+
+.comment-send-icon.disabled {
+  color: #bdc3c7;
+  cursor: default;
+  pointer-events: none;
 }

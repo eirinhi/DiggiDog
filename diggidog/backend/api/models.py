@@ -146,7 +146,7 @@ class Comment(models.Model):
 class Like(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    participant = models.ForeignKey(Dog, on_delete=models.CASCADE)
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name="likes")
 
     class Meta:
         unique_together = ('user', 'participant')

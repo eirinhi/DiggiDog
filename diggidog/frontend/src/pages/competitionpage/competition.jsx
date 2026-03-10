@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Heart, MessageCircle, Send, Trash2 } from "lucide-react";
 import "./competition.css";
 
 const API_BASE = "http://127.0.0.1:8000/api";
@@ -33,6 +34,15 @@ export default function Competition_page() {
   const [participateLoading, setParticipateLoading] = useState(false);
   const [userParticipatingDogs, setUserParticipatingDogs] = useState([]);
 
+  const [likeCounts, setLikeCounts] = useState({});
+  const [userLikes, setUserLikes] = useState({});
+  const [commentCounts, setCommentCounts] = useState({});
+
+  const [commentModalParticipant, setCommentModalParticipant] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [commentsLoading, setCommentsLoading] = useState(false);
+
   const checkUser = () => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
@@ -42,6 +52,43 @@ export default function Competition_page() {
       setLoggedIn(false);
       setUser(null);
     }
+  };
+
+  const fetchLikesAndComments = async (parts, currentUser) => {
+    const likeCountsMap = {};
+    const userLikesMap = {};
+    const commentCountsMap = {};
+
+    await Promise.all(
+      parts.map(async (p) => {
+        try {
+          const likesRes = await fetch(`${API_BASE}/get_likes/?participant_id=${p.id}`);
+          if (likesRes.ok) {
+            const data = await likesRes.json();
+            likeCountsMap[p.id] = data.likes.length;
+            if (currentUser) {
+              userLikesMap[p.id] = data.likes.some((l) => l.user_id === currentUser.id);
+            }
+          }
+        } catch (err) {
+          console.error(`Failed to fetch likes for participant ${p.id}:`, err);
+        }
+
+        try {
+          const commentsRes = await fetch(`${API_BASE}/participants/${p.id}/comments/`);
+          if (commentsRes.ok) {
+            const data = await commentsRes.json();
+            commentCountsMap[p.id] = data.length;
+          }
+        } catch (err) {
+          console.error(`Failed to fetch comments for participant ${p.id}:`, err);
+        }
+      })
+    );
+
+    setLikeCounts(likeCountsMap);
+    setUserLikes(userLikesMap);
+    setCommentCounts(commentCountsMap);
   };
 
   useEffect(() => {
@@ -101,6 +148,10 @@ export default function Competition_page() {
           setCompetition(comp);
           setParticipants(participantsWithDogs);
           setError(null);
+
+          const savedUser = localStorage.getItem("user");
+          const currentUser = savedUser ? JSON.parse(savedUser) : null;
+          fetchLikesAndComments(parts, currentUser);
         }
       } catch (err) {
         console.error(err);
@@ -119,6 +170,122 @@ export default function Competition_page() {
       cancelled = true;
     };
   }, [id]);
+
+  const handleLike = async (participantId) => {
+    if (!loggedIn || !user) {
+      alert("Please log in to like");
+      return;
+    }
+
+    const alreadyLiked = userLikes[participantId];
+
+    if (alreadyLiked) {
+      try {
+        const res = await fetch(`${API_BASE}/unlike_participant/`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.id, participant_id: participantId }),
+        });
+        if (res.ok) {
+          setUserLikes((prev) => ({ ...prev, [participantId]: false }));
+          setLikeCounts((prev) => ({ ...prev, [participantId]: (prev[participantId] || 1) - 1 }));
+        }
+      } catch (err) {
+        console.error("Error unliking:", err);
+      }
+    } else {
+      try {
+        const res = await fetch(`${API_BASE}/like_participant/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.id, participant_id: participantId }),
+        });
+        if (res.ok) {
+          setUserLikes((prev) => ({ ...prev, [participantId]: true }));
+          setLikeCounts((prev) => ({ ...prev, [participantId]: (prev[participantId] || 0) + 1 }));
+        }
+      } catch (err) {
+        console.error("Error liking:", err);
+      }
+    }
+  };
+
+  const openCommentModal = async (participant) => {
+    if (!loggedIn || !user) {
+      alert("Please log in to comment");
+      return;
+    }
+
+    setCommentModalParticipant(participant);
+    setNewComment("");
+    setCommentsLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/participants/${participant.id}/comments/`);
+      if (res.ok) {
+        const data = await res.json();
+        setComments(data);
+      }
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const handleSubmitComment = async () => {
+    if (!newComment.trim() || !commentModalParticipant || !user) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/comments/create/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user.id,
+          participant_id: commentModalParticipant.id,
+          text: newComment.trim(),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setComments((prev) => [
+          {
+            id: data.comment.id,
+            user_id: user.id,
+            username: user.username,
+            text: data.comment.text,
+            created_at: data.comment.created_at,
+          },
+          ...prev,
+        ]);
+        setNewComment("");
+        setCommentCounts((prev) => ({
+          ...prev,
+          [commentModalParticipant.id]: (prev[commentModalParticipant.id] || 0) + 1,
+        }));
+      }
+    } catch (err) {
+      console.error("Error creating comment:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const res = await fetch(`${API_BASE}/comments/${commentId}/delete/`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setComments((prev) => prev.filter((c) => c.id !== commentId));
+        setCommentCounts((prev) => ({
+          ...prev,
+          [commentModalParticipant.id]: Math.max((prev[commentModalParticipant.id] || 1) - 1, 0),
+        }));
+      }
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+    }
+  };
 
   const handleParticipate = async () => {
     if (!loggedIn || !user) {
@@ -341,13 +508,113 @@ export default function Competition_page() {
                     Age: {participant.dog?.age || "N/A"}, Breed: {participant.dog?.breed || "N/A"}
                   </p>
                 </div>
+                <div className="dog-card-actions">
+                  <span
+                    className={`action-icon-btn ${userLikes[participant.id] ? "liked" : ""}`}
+                    onClick={() => handleLike(participant.id)}
+                    title={loggedIn ? (userLikes[participant.id] ? "Unlike" : "Like") : "Log in to like"}
+                  >
+                    <Heart
+                      size={18}
+                      fill={userLikes[participant.id] ? "currentColor" : "none"}
+                    />
+                    <span className="action-count">{likeCounts[participant.id] || 0}</span>
+                  </span>
+                  <span
+                    className="action-icon-btn"
+                    onClick={() => openCommentModal(participant)}
+                    title={loggedIn ? "Comments" : "Log in to comment"}
+                  >
+                    <MessageCircle size={18} />
+                    <span className="action-count">{commentCounts[participant.id] || 0}</span>
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Participation Modal */}
+      {commentModalParticipant && (
+        <div className="modal-overlay" onClick={() => setCommentModalParticipant(null)}>
+          <div className="comment-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="modal-close"
+              onClick={() => setCommentModalParticipant(null)}
+            >
+              &times;
+            </button>
+            <div className="comment-modal-layout">
+              <div className="comment-modal-image-section">
+                {commentModalParticipant.dog?.picture ? (
+                  <img
+                    src={toImageUrl(commentModalParticipant.dog.picture)}
+                    alt={commentModalParticipant.dog?.name}
+                    className="comment-modal-dog-image"
+                  />
+                ) : (
+                  <div className="comment-modal-no-image">No image</div>
+                )}
+                <div className="comment-modal-dog-info">
+                  <h3>{commentModalParticipant.dog?.name || "Unknown Dog"}</h3>
+                  <p>Owner: {commentModalParticipant.dog?.owner_name || "Unknown"}</p>
+                </div>
+              </div>
+              <div className="comment-modal-comments-section">
+                <h3 className="comments-title">Comments</h3>
+                <div className="comments-list">
+                  {commentsLoading ? (
+                    <p className="comments-loading">Loading comments...</p>
+                  ) : comments.length === 0 ? (
+                    <p className="no-comments">No comments yet. Be the first!</p>
+                  ) : (
+                    comments.map((comment) => (
+                      <div key={comment.id} className="comment-item">
+                        <div className="comment-header">
+                          <span className="comment-username">{comment.username}</span>
+                          {user && comment.user_id === user.id && (
+                            <span
+                              className="comment-delete-icon"
+                              onClick={() => handleDeleteComment(comment.id)}
+                              title="Delete comment"
+                            >
+                              <Trash2 size={14} />
+                            </span>
+                          )}
+                        </div>
+                        <span className="comment-text">{comment.text}</span>
+                        <span className="comment-time">
+                          {new Date(comment.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="comment-input-area">
+                  <input
+                    type="text"
+                    className="comment-input"
+                    placeholder="Write a comment..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSubmitComment();
+                    }}
+                    maxLength={250}
+                  />
+                  <span
+                    className={`comment-send-icon ${!newComment.trim() ? "disabled" : ""}`}
+                    onClick={() => { if (newComment.trim()) handleSubmitComment(); }}
+                  >
+                    <Send size={18} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showParticipateModal && (
         <div className="modal-overlay" onClick={() => setShowParticipateModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -361,12 +628,11 @@ export default function Competition_page() {
                 className="modal-close"
                 onClick={() => setShowParticipateModal(false)}
               >
-                ×
+                &times;
               </button>
             </div>
 
             <div className="modal-body">
-              {/* Participating Dogs Section */}
               {userParticipatingDogs.length > 0 && (
                 <div className="participating-section">
                   <h3>Your Participating Dogs</h3>
@@ -400,7 +666,6 @@ export default function Competition_page() {
                 </div>
               )}
 
-              {/* Available Dogs Section - Only show if competition not at max capacity */}
               {(!competition || participants.length < competition.max_participants) && (
                 <div className="available-section">
                   <h3>Add More Dogs</h3>
@@ -447,7 +712,6 @@ export default function Competition_page() {
                 </div>
               )}
 
-              {/* Show message when at max capacity and no dogs to remove */}
               {competition && participants.length >= competition.max_participants && userParticipatingDogs.length === 0 && (
                 <div className="no-dogs-message">
                   <p>This competition has reached the maximum number of dogs.</p>
