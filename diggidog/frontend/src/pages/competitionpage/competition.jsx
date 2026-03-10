@@ -298,8 +298,8 @@ export default function Competition_page() {
                 <span className="detail-value">{formatDate(competition.end_date)}</span>
               </div>
               <div className="detail-row">
-                <span className="detail-label">Maximum Participants:</span>
-                <span className="detail-value">{competition.max_participants}</span>
+                <span className="detail-label">Participants:</span>
+                <span className="detail-value">{participants.length} / {competition.max_participants}</span>
               </div>
             </div>
             <button
