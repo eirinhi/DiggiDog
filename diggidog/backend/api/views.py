@@ -168,6 +168,10 @@ def register_participant(request):
     if dog.owner != user:
         return Response({"error": "Dog does not belong to this user"}, status=400)
 
+    now = timezone.now()
+    if now > competition.end_date:
+        return Response({"error": "The competition has ended."}, status=400)
+
     participant = Participant(user=user, competition=competition, dog=dog)
     try:
         participant.full_clean()

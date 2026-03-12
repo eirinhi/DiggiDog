@@ -62,7 +62,7 @@ export default function Userpage() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const updated = newDogs.map((dog, i) =>
-        i === index ? { ...dog, imagePreview: e.target.result, imageBase64: e.target.result } : dog
+        i === index ? { ...dog, imagePreview: e.target.result, imageBase64: e.target.result, imageError: "" } : dog
       );
       setNewDogs(updated);
     };
@@ -113,7 +113,7 @@ export default function Userpage() {
 
       let hasError = false;
       const validatedDogs = newDogs.map((dog) => {
-        const errors = { nameError: "", breedError: "", ageError: "" };
+        const errors = { nameError: "", breedError: "", ageError: "", imageError: "" };
         if (!dog.name.trim()) {
           errors.nameError = "Name is required.";
           hasError = true;
@@ -127,6 +127,10 @@ export default function Userpage() {
           hasError = true;
         } else if (parseInt(dog.age) > 30) {
           errors.ageError = "Age cannot exceed 30.";
+          hasError = true;
+        }
+        if (!dog.imageBase64) {
+          errors.imageError = "Picture is required.";
           hasError = true;
         }
         return { ...dog, ...errors };
@@ -268,16 +272,8 @@ export default function Userpage() {
                 </span>
               </div>
               <div className="userpage__dogImageSection">
-                {dog.imagePreview ? (
+                {dog.imagePreview && (
                   <img className="userpage__dogImage" src={dog.imagePreview} alt={dog.name || "Hund"} />
-                ) : (
-                  <div className="userpage__dogImagePlaceholder">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                  </div>
                 )}
                 <label className="userpage__dogImageBtn">
                   {dog.imagePreview ? "Change Picture" : "Upload picture"}
@@ -288,6 +284,9 @@ export default function Userpage() {
                     onChange={(e) => handleNewDogImage(index, e.target.files[0])}
                   />
                 </label>
+                {dog.imageError && (
+                  <span className="userpage__fieldError">{dog.imageError}</span>
+                )}
               </div>
               <div className="userpage__row">
                 <div className="userpage__section">
@@ -298,7 +297,7 @@ export default function Userpage() {
                     onChange={(e) =>
                       handleNewDogChange(index, "name", e.target.value)
                     }
-                    placeholder="Buddy"
+                    placeholder="Name"
                   />
                   {dog.nameError && (
                     <span className="userpage__fieldError">{dog.nameError}</span>
@@ -312,7 +311,7 @@ export default function Userpage() {
                     onChange={(e) =>
                       handleNewDogChange(index, "breed", e.target.value)
                     }
-                    placeholder="Golden Retriever"
+                    placeholder="Breed"
                   />
                   {dog.breedError && (
                     <span className="userpage__fieldError">{dog.breedError}</span>
@@ -330,7 +329,7 @@ export default function Userpage() {
                   onChange={(e) =>
                     handleNewDogChange(index, "age", e.target.value)
                   }
-                  placeholder="3"
+                  placeholder="Age"
                 />
                 {dog.ageError && (
                   <span className="userpage__fieldError">{dog.ageError}</span>
@@ -347,14 +346,16 @@ export default function Userpage() {
             </div>
           ))}
 
-          <span
-            className="userpage__addDogBtn"
-            onClick={handleAddDog}
-            role="button"
-            tabIndex={0}
-          >
-            + Add Dog 
-          </span>
+          {newDogs.length === 0 && (
+            <span
+              className="userpage__addDogBtn"
+              onClick={handleAddDog}
+              role="button"
+              tabIndex={0}
+            >
+              + Add Dog
+            </span>
+          )}
 
           <span
             className="userpage__saveBtn"
