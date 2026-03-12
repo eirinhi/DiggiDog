@@ -503,7 +503,20 @@ export default function Competition_page() {
         ) : (
           <div className="dogs-grid">
             {participants.map((participant) => (
-              <div key={participant.id} className="dog-card">
+              <div
+                key={participant.id}
+                className="dog-card"
+                onClick={() => openCommentModal(participant)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openCommentModal(participant);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                title={loggedIn ? "Open comments" : "Log in to comment"}
+              >
                 {participant.dog?.picture && (
                   <img
                     src={toImageUrl(participant.dog.picture)}
@@ -524,7 +537,8 @@ export default function Competition_page() {
                       <button
                         type="button"
                         className={`participating-remove-btn ${participateLoading ? "disabled" : ""}`}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           if (!participateLoading) {
                             handleRemoveParticipation(participant.id);
                           }
@@ -539,7 +553,10 @@ export default function Competition_page() {
                 <div className="dog-card-actions">
                   <span
                     className={`action-icon-btn ${userLikes[participant.id] ? "liked" : ""}`}
-                    onClick={() => handleLike(participant.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLike(participant.id);
+                    }}
                     title={loggedIn ? (userLikes[participant.id] ? "Unlike" : "Like") : "Log in to like"}
                   >
                     <Heart
@@ -550,7 +567,10 @@ export default function Competition_page() {
                   </span>
                   <span
                     className="action-icon-btn"
-                    onClick={() => openCommentModal(participant)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openCommentModal(participant);
+                    }}
                     title={loggedIn ? "Comments" : "Log in to comment"}
                   >
                     <MessageCircle size={18} />
