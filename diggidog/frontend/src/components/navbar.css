@@ -30,10 +30,12 @@
 
 .navBar__boxcenter {
   justify-content: center;
+  gap: 16px;
 }
 
 .navBar__boxright {
   justify-content: flex-end;
+  gap: 16px;
 }
 
 .navBar__logo {
@@ -43,7 +45,7 @@
 }
 
 .navBar__logoImage {
-  height: 68px;
+  height: 56px;
   width: auto;
   display: block;
 }
@@ -52,12 +54,12 @@
   text-decoration: none;
   color: #ffffff;
   font-weight: 600;
-  padding: 6px 16px;
+  padding: 6px 14px;
   border-radius: 10px;
   background-color: #0b1f3a;
   height: 36px;
   white-space: nowrap;
-  width: 64px;
+  min-width: 76px;
 
   display: flex;
   align-items: center;
@@ -87,6 +89,53 @@
   background: #0b1f3a9f;
 }
 
+.navBar__compsLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #0b1f3a;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.navBar__compsLink:hover {
+  color: #0b1f3a9f;
+}
+
+.navBar__compsIcon {
+  width: 22px;
+  height: 22px;
+}
+
+.navBar__dashboardBtn {
+  background: none;
+  border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #0b1f3a;
+  font-weight: 600;
+  font-size: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.navBar__dashboardBtn:hover:not(:disabled) {
+  background: none;
+  color: #0b1f3a9f;
+  border: none;
+}
+
+.navBar__dashboardIcon {
+  width: 18px;
+  height: 18px;
+}
+
 .navBar__userActions {
   display: flex;
   align-items: center;
@@ -100,7 +149,7 @@
   text-decoration: none;
   color: #0b1f3a;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .navBar__profileLink:hover {
@@ -108,8 +157,8 @@
 }
 
 .navBar__profileIcon {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 
 .navBar__searchBtn {
@@ -121,9 +170,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
+  gap: 6px;
   cursor: pointer;
-  max-width: 30px;
+  color: #0b1f3a;
+  font-weight: 600;
+  font-size: 18px;
 }
 
 .navBar__searchBtn:hover:not(:disabled) {
@@ -133,14 +184,18 @@
 }
 
 .navBar__searchIcon {
-  width: 18px;
-  height: 18px;
-  color: #0b1f3a;
+  width: 22px;
+  height: 22px;
+  color: inherit;
   stroke-width: 2.5;
 }
 
+.navBar__signOut {
+  padding: 5px 12px;
+}
+
 .navBar__searchBtn:hover:not(:disabled) .navBar__searchIcon {
-  color: #0b1f3a9f;
+  color: inherit;
 }
 
 .navBar__searchContainer {
