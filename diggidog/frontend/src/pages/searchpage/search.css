@@ -1,0 +1,93 @@
+.searchPage {
+  min-height: 100vh;
+  background: #FAF9F6;
+  margin-top: 50px;
+  padding-top: 140px;
+  padding-bottom: 40px;
+}
+
+.searchPage__container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.searchPage__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0b1f3a;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.searchPage__loading {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  padding: 40px 20px;
+}
+
+.searchPage__resultsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.searchPage__userCardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.searchPage__userCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.searchPage__userCardLink:hover .searchPage__userCard {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.searchPage__userInfo {
+  flex: 1;
+}
+
+.searchPage__username {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0b1f3a;
+  margin: 0 0 8px 0;
+}
+
+.searchPage__name {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.searchPage__bio {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+  line-height: 1.4;
+  max-width: 400px;
+}
+
+@media (max-width: 600px) {
+  .searchPage__userCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .searchPage__title {
+    font-size: 22px;
+  }
+}
