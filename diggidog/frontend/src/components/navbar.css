@@ -25,17 +25,17 @@
 .navBar__boxleft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .navBar__boxcenter {
   justify-content: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .navBar__boxright {
   justify-content: flex-end;
-  gap: 16px;
+  gap: 20px;
 }
 
 .navBar__logo {
@@ -139,7 +139,7 @@
 .navBar__userActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .navBar__profileLink {
