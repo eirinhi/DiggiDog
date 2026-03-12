@@ -35,9 +35,14 @@ export default function CompOverview() {
       const savedUser = localStorage.getItem("user");
 
       if (savedUser) {
-        setLoggedIn(true);
-        const user = JSON.parse(savedUser);
-        setIsAdmin(!!user.is_admin);
+        try {
+          setLoggedIn(true);
+          const user = JSON.parse(savedUser);
+          setIsAdmin(!!user?.is_admin);
+        } catch {
+          setLoggedIn(false);
+          setIsAdmin(false);
+        }
       } else {
         setLoggedIn(false);
         setIsAdmin(false);
@@ -78,8 +83,10 @@ export default function CompOverview() {
 
     fetchCompetitions();
     checkUser();
+    window.addEventListener("userChanged", checkUser);
     return () => {
       cancelled = true;
+      window.removeEventListener("userChanged", checkUser);
     };
   }, []);
 
@@ -87,6 +94,9 @@ export default function CompOverview() {
     <div className="compLayout">
       <aside className="compSideAd">
         <div className="compAdBox">
+          {isAdmin && (
+            <Link className="compAddAdLink" to="/upload_ad">+ Add Ad</Link>
+          )}
           <Ad />
           <Ad />
           <Ad />

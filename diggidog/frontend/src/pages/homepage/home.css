@@ -39,6 +39,27 @@
   margin-top :30px;
 }
 
+.homeAddAdLink {
+  display: flex;
+  justify-self: stretch;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #0b1f3a;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.homeAddAdLink:hover {
+  background: #0b1f3abd;
+}
+
 
 @media (max-width: 1200px){
   .homeLayout{
