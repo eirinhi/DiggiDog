@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Heart, MessageCircle, Send, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Send, Trash2, X } from "lucide-react";
 import "./competition.css";
 
 const API_BASE = "http://127.0.0.1:8000/api";
@@ -377,6 +377,7 @@ export default function Competition_page() {
     setParticipateLoading(true);
 
     try {
+      const removedDog = userParticipatingDogs.find((dog) => dog.participant_id === participantId);
       const res = await fetch(`${API_BASE}/participants/${participantId}/`, {
         method: "DELETE",
         headers: {
@@ -385,9 +386,18 @@ export default function Competition_page() {
       });
 
       if (res.ok) {
+        setUserParticipatingDogs((prev) => prev.filter((dog) => dog.participant_id !== participantId));
+        if (removedDog) {
+          setUserDogs((prev) => [...prev, {
+            id: removedDog.id,
+            name: removedDog.name,
+            age: removedDog.age,
+            breed: removedDog.breed,
+            picture: removedDog.picture,
+          }]);
+        }
+        setParticipants((prev) => prev.filter((p) => p.id !== participantId));
         alert("Successfully removed from the competition!");
-        setShowParticipateModal(false);
-        window.location.reload();
       } else {
         const data = await res.json();
         alert(`Error: ${data.error || "Failed to remove"}`);
@@ -502,11 +512,29 @@ export default function Competition_page() {
                   />
                 )}
                 <div className="dog-info">
-                  <h3 className="dog-name">{participant.dog?.name || "Unknown Dog"}</h3>
-                  <p className="dog-owner">Owner: {participant.dog?.owner_name || "Unknown"}</p>
-                  <p className="dog-details">
-                    Age: {participant.dog?.age || "N/A"}, Breed: {participant.dog?.breed || "N/A"}
-                  </p>
+                  <div className="dog-info-layout">
+                    <div className="dog-info-main">
+                      <h3 className="dog-name">{participant.dog?.name || "Unknown Dog"}</h3>
+                      <p className="dog-owner">Owner: {participant.dog?.owner_name || "Unknown"}</p>
+                      <p className="dog-details">
+                        Age: {participant.dog?.age || "N/A"}, Breed: {participant.dog?.breed || "N/A"}
+                      </p>
+                    </div>
+                    {user && participant.user_id === user.id && (
+                      <button
+                        type="button"
+                        className={`participating-remove-btn ${participateLoading ? "disabled" : ""}`}
+                        onClick={() => {
+                          if (!participateLoading) {
+                            handleRemoveParticipation(participant.id);
+                          }
+                        }}
+                        title="Remove from competition"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="dog-card-actions">
                   <span
@@ -619,62 +647,23 @@ export default function Competition_page() {
         <div className="modal-overlay" onClick={() => setShowParticipateModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>
-                {competition && participants.length >= competition.max_participants
-                  ? "Manage Your Participation"
-                  : "Select a Dog to Participate"}
-              </h2>
+              <h2>Select a Dog to Participate</h2>
               <button
-                className="modal-close"
+                className="modal-close participate-modal-close"
                 onClick={() => setShowParticipateModal(false)}
               >
-                &times;
+                <X size={16} strokeWidth={2.5} />
               </button>
             </div>
 
             <div className="modal-body">
-              {userParticipatingDogs.length > 0 && (
-                <div className="participating-section">
-                  <h3>Your Participating Dogs</h3>
-                  <div className="dogs-list">
-                    {userParticipatingDogs.map((dog) => (
-                      <div key={dog.id} className="dog-option participating">
-                        <div className="dog-option-content">
-                          {dog.picture && (
-                            <img
-                              src={toImageUrl(dog.picture)}
-                              alt={dog.name}
-                              className="dog-option-image"
-                            />
-                          )}
-                          <div className="dog-option-info">
-                            <h3>{dog.name}</h3>
-                            <p>Age: {dog.age}, Breed: {dog.breed}</p>
-                            <span className="participating-badge">Participating</span>
-                          </div>
-                          <button
-                            className="btn-remove"
-                            onClick={() => handleRemoveParticipation(dog.participant_id)}
-                            disabled={participateLoading}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {(!competition || participants.length < competition.max_participants) && (
                 <div className="available-section">
                   <h3>Add More Dogs</h3>
                   {userDogs.length === 0 ? (
                     <div className="no-dogs-message">
                       <p>You don't have any additional dogs available to participate.</p>
-                      {userParticipatingDogs.length > 0 && (
-                        <p>All your other dogs are already registered for this competition.</p>
-                      )}
+                      <p>Go to your profile to register more dogs.</p>
                     </div>
                   ) : (
                     <div className="dogs-selection">
@@ -712,10 +701,10 @@ export default function Competition_page() {
                 </div>
               )}
 
-              {competition && participants.length >= competition.max_participants && userParticipatingDogs.length === 0 && (
+              {competition && participants.length >= competition.max_participants && (
                 <div className="no-dogs-message">
                   <p>This competition has reached the maximum number of dogs.</p>
-                  <p>You don't have any dogs participating that you can remove.</p>
+                  <p>You can remove your dogs from the Participating Dogs section.</p>
                 </div>
               )}
             </div>
