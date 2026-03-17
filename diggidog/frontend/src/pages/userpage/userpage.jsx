@@ -115,6 +115,10 @@ export default function Userpage() {
       setPasswordError("All fields are required.");
       return;
     }
+    if (passwordForm.current === passwordForm.newPass) {
+      setPasswordError("New password cannot be the same as the current password.");
+      return;
+    }
     if (passwordForm.newPass !== passwordForm.confirm) {
       setPasswordError("New passwords do not match.");
       return;

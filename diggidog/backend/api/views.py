@@ -584,6 +584,9 @@ def change_password(request):
     if not user.check_password(current_password):
         return Response({"error": "Current password is incorrect"}, status=400)
 
+    if user.check_password(new_password):
+        return Response({"error": "New password cannot be the same as the current password"}, status=400)
+
     user.set_password(new_password)
     user.save()
 
