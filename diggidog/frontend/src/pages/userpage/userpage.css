@@ -419,6 +419,17 @@
   min-width: 72px;
   padding: 6px 10px;
   font-size: 14px;
+  font-weight: 600;
   line-height: 1;
   border-radius: 10px;
+  border: 1px solid #c7cdd8;
+  background: #d6dbe6;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.userpage__showBtn:hover {
+  background: #c7cdd8;
+  border-color: #b8bfcb;
 }

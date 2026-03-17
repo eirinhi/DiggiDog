@@ -40,6 +40,7 @@
   border-radius: 10px;
   border: 1px solid #d6dbe6;
   background: white;
+  color: #0b1f3a;
   cursor: pointer;
   font-weight: 600;
 }
@@ -63,6 +64,16 @@
   font-size: 14px;
   line-height: 1;
   border-radius: 10px;
+  border: 1px solid #c7cdd8;
+  background: #d6dbe6;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btnSmall:hover {
+  background: #c7cdd8;
+  border-color: #b8bfcb;
 }
 
 
