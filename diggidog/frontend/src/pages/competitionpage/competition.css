@@ -97,6 +97,30 @@
   font-size: 0.95rem;
 }
 
+.detail-value {
+  color: #2c3e50;
+  font-weight: 500;
+  text-align: right;
+}
+
+.competition-status {
+  text-align: center;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.competition-status.finished {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.competition-status.not-started {
+  background: #fef9e7;
+  color: #b7950b;
+}
+
 .participate-btn {
   width: 100%;
   padding: 15px;
@@ -164,11 +188,6 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #ecf0f1;
   cursor: pointer;
-}
-
-.dog-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .dog-image {
@@ -702,7 +721,7 @@
 .comment-modal-dog-image {
   width: 100%;
   flex: 1;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   min-height: 0;
 }

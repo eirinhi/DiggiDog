@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Heart, MessageCircle, Send, Trash2, X } from "lucide-react";
 import "./competition.css";
@@ -42,6 +42,27 @@ export default function Competition_page() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [commentsLoading, setCommentsLoading] = useState(false);
+
+  const sortedParticipants = useMemo(() => {
+    return [...participants].sort((a, b) => {
+      const likesA = likeCounts[a.id] || 0;
+      const likesB = likeCounts[b.id] || 0;
+
+      if (likesB !== likesA) {
+        return likesB - likesA;
+      }
+
+      const nameA = (a.dog?.name || "").toLowerCase();
+      const nameB = (b.dog?.name || "").toLowerCase();
+      const nameCompare = nameA.localeCompare(nameB);
+
+      if (nameCompare !== 0) {
+        return nameCompare;
+      }
+
+      return a.id - b.id;
+    });
+  }, [participants, likeCounts]);
 
   const checkUser = () => {
     const savedUser = localStorage.getItem("user");
@@ -171,9 +192,17 @@ export default function Competition_page() {
     };
   }, [id]);
 
+  const canInteract = competition
+    ? new Date() >= new Date(competition.start_date)
+    : true;
+
   const handleLike = async (participantId) => {
     if (!loggedIn || !user) {
       alert("Please log in to like");
+      return;
+    }
+    if (!canInteract) {
+      alert("Likes are not available until the competition has started.");
       return;
     }
 
@@ -213,6 +242,10 @@ export default function Competition_page() {
   const openCommentModal = async (participant) => {
     if (!loggedIn || !user) {
       alert("Please log in to comment");
+      return;
+    }
+    if (!canInteract) {
+      alert("Comments are not available until the competition has started.");
       return;
     }
 
@@ -293,9 +326,8 @@ export default function Competition_page() {
       return;
     }
 
-    const userHasParticipatingDogs = participants.some(p => p.user_id === user.id);
-    if (competition && participants.length >= competition.max_participants && !userHasParticipatingDogs) {
-      alert("This competition has reached the maximum number of dogs and you don't have any dogs entered.");
+    if (competition && participants.length >= competition.max_participants) {
+      alert("This competition is full.");
       return;
     }
 
@@ -441,6 +473,20 @@ export default function Competition_page() {
   }
 
   const compImageUrl = toImageUrl(competition.picture);
+  const isCometitionFull = participants.length >= competition.max_participants;
+  const userEnteredDogsCount = user ? participants.filter((p) => p.user_id === user.id).length : 0;
+  const participateButtonLabel = !loggedIn 
+    ? "Login to Participate" 
+    : isCometitionFull 
+      ? "Competition is full" 
+      : userEnteredDogsCount >= 1 
+        ? "Enter another dog" 
+        : "Participate";
+  const now = new Date();
+  const startDate = new Date(competition.start_date);
+  const endDate = new Date(competition.end_date);
+  const isFinished = now > endDate;
+  const isNotStarted = now < startDate;
 
   return (
     <div className="competition-page">
@@ -479,18 +525,14 @@ export default function Competition_page() {
                 <span className="detail-value">{participants.length} / {competition.max_participants}</span>
               </div>
             </div>
+            {isFinished && <p className="competition-status finished">The competition has ended.</p>}
+            {isNotStarted && <p className="competition-status not-started">The competition has not started yet.</p>}
             <button
               className="participate-btn"
               onClick={handleParticipate}
-              disabled={!loggedIn || (competition && participants.length >= competition.max_participants && !participants.some(p => p.user_id === user?.id))}
+              disabled={!loggedIn || isCometitionFull}
             >
-              {loggedIn
-                ? (competition && participants.length >= competition.max_participants
-                    ? (participants.some(p => p.user_id === user?.id)
-                        ? "Manage Participation"
-                        : "Competition Full")
-                    : "Participate")
-                : "Login to Participate"}
+              {participateButtonLabel}
             </button>
           </div>
         </div>
@@ -502,7 +544,7 @@ export default function Competition_page() {
           <p className="no-dogs">No dogs have registered for this competition yet.</p>
         ) : (
           <div className="dogs-grid">
-            {participants.map((participant) => (
+            {sortedParticipants.map((participant) => (
               <div
                 key={participant.id}
                 className="dog-card"

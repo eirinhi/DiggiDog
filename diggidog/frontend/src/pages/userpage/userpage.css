@@ -77,22 +77,6 @@
   white-space: nowrap;
 }
 
-.userpage__addAdLink {
-  padding: 6px 14px;
-  border-radius: 6px;
-  background: #0b1f3a;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.2s;
-}
-
-.userpage__addAdLink:hover {
-  background: #0b1f3abd;
-}
-
 .userpage__displayName {
   font-size: 20px;
   font-weight: 600;

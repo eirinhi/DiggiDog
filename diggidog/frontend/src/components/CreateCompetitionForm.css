@@ -69,7 +69,9 @@ button {
     padding: 12px;
     font-size: 16px;
     border-radius: 10px;
-    border: 1px solid #d6dbe6;
+    border: none;
+    background-color: #0b1f3a;
+    color: #ffffff;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s ease;

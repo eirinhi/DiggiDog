@@ -21,7 +21,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=20, unique=True, verbose_name='username')
     name = models.CharField(max_length=50, blank=True, verbose_name='name')
     bio = models.TextField(blank=True)
-    is_admin = models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='admin status')
+    is_admin = models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.')
     date_joined = models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')
 
     objects = UserManager()
@@ -31,6 +31,16 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.username
+    
+    @property
+    def is_staff(self):
+        return self.is_admin
+    
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin
 
 class Competition(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
@@ -99,7 +109,7 @@ class Participant(models.Model):
         unique_together = ("competition", "user", "dog")
 
     def __str__(self):
-        return f"Participant(user={self.user.username}, comp={self.competition.name}, dog={self.dog.name})"
+        return self.dog.name
 
     def clean(self):
         if self.competition and self.competition.max_participants is not None:
@@ -129,6 +139,9 @@ class Ad(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     file = models.FileField(upload_to="images/")
 
+    def __str__(self):
+        return self.file.url
+
 
 class Comment(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
@@ -143,6 +156,7 @@ class Comment(models.Model):
     def clean(self):
         if not self.text.strip():
             raise ValidationError({"text": "Comment text cannot be blank."})
+
 class Like(models.Model):
     id = models.BigAutoField(auto_created=True, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -150,3 +164,7 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('user', 'participant')
+    
+
+    def __str__(self):
+        return f"Like by {self.user.username} on {self.participant}"

@@ -9,7 +9,6 @@ media/
 # ===== Django static/media =====
 staticfiles/
 
-
 # ===== Node / React =====
 node_modules/
 dist/
