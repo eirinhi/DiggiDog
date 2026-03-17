@@ -293,9 +293,8 @@ export default function Competition_page() {
       return;
     }
 
-    const userHasParticipatingDogs = participants.some(p => p.user_id === user.id);
-    if (competition && participants.length >= competition.max_participants && !userHasParticipatingDogs) {
-      alert("This competition has reached the maximum number of dogs and you don't have any dogs entered.");
+    if (competition && participants.length >= competition.max_participants) {
+      alert("This competition is full.");
       return;
     }
 
@@ -441,6 +440,15 @@ export default function Competition_page() {
   }
 
   const compImageUrl = toImageUrl(competition.picture);
+  const isCometitionFull = participants.length >= competition.max_participants;
+  const userEnteredDogsCount = user ? participants.filter((p) => p.user_id === user.id).length : 0;
+  const participateButtonLabel = !loggedIn 
+    ? "Login to Participate" 
+    : isCometitionFull 
+      ? "Competition is full" 
+      : userEnteredDogsCount >= 1 
+        ? "Enter another dog" 
+        : "Participate";
 
   return (
     <div className="competition-page">
@@ -482,15 +490,9 @@ export default function Competition_page() {
             <button
               className="participate-btn"
               onClick={handleParticipate}
-              disabled={!loggedIn || (competition && participants.length >= competition.max_participants && !participants.some(p => p.user_id === user?.id))}
+              disabled={!loggedIn || isCometitionFull}
             >
-              {loggedIn
-                ? (competition && participants.length >= competition.max_participants
-                    ? (participants.some(p => p.user_id === user?.id)
-                        ? "Manage Participation"
-                        : "Competition Full")
-                    : "Participate")
-                : "Login to Participate"}
+              {participateButtonLabel}
             </button>
           </div>
         </div>
