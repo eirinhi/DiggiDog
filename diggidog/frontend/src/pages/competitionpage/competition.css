@@ -69,7 +69,7 @@
   font-weight: 700;
   color: #2c3e50;
   margin: 0 0 20px 0;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid #0b1f3a;
   padding-bottom: 10px;
 }
 
@@ -100,7 +100,7 @@
 .participate-btn {
   width: 100%;
   padding: 15px;
-  background: #3498db;
+  background: #0b1f3a;
   color: white;
   border: none;
   border-radius: 8px;
@@ -113,7 +113,7 @@
 }
 
 .participate-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2980b9, #21618c);
+  background: #0b1f3a9f;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
 }
@@ -226,7 +226,7 @@
 
 .loading {
   font-size: 1.2rem;
-  color: #3498db;
+  color: #0b1f3a;
 }
 
 .error {
@@ -516,12 +516,12 @@
 }
 
 .dog-option:hover {
-  border-color: #3498db;
+  border-color: #0b1f3a7d;
   background: #f8f9ff;
 }
 
 .dog-option.selected {
-  border-color: #3498db;
+  border-color: #0b1f3a7d;
   background: #ebf5fb;
 }
 
@@ -572,8 +572,8 @@
 }
 
 .radio-circle.checked {
-  border-color: #3498db;
-  background: #3498db;
+  border-color: #0b1f3a;
+  background: #0b1f3a;
 }
 
 .radio-dot {
@@ -612,12 +612,12 @@
 }
 
 .btn-primary {
-  background: #3498db;
+  background: #0b1f3a;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2980b9;
+  background: #0b1f3a9f;
 }
 
 .btn-primary:disabled {

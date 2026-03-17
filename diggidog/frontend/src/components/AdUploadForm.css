@@ -63,7 +63,7 @@
 }
 
 .file-input-wrapper input[type="file"]:focus + .file-label {
-    outline: 2px solid #2b5cff;
+    outline: 2px solid #0b1f3a;
     outline-offset: 2px;
 }
 

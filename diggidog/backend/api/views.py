@@ -526,3 +526,25 @@ def unlike_participant(request):
         return Response({"message": "Participant unliked"}, status=200)
     except Like.DoesNotExist:
         return Response({"error": "Like not found"}, status=404)
+
+@api_view(['POST'])
+def change_password(request):
+    user_id = request.data.get("user_id")
+    current_password = request.data.get("current_password")
+    new_password = request.data.get("new_password")
+
+    if not user_id or not current_password or not new_password:
+        return Response({"error": "All fields are required"}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+    if not user.check_password(current_password):
+        return Response({"error": "Current password is incorrect"}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "Password changed successfully"}, status=200)

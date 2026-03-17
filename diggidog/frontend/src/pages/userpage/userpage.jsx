@@ -16,6 +16,14 @@ export default function Userpage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ current: "", newPass: "", confirm: "" });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -82,6 +90,59 @@ export default function Userpage() {
         : dog
     );
     setNewDogs(updated);
+  };
+
+  const handleOpenPasswordModal = () => {
+    setPasswordForm({ current: "", newPass: "", confirm: "" });
+    setPasswordError("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setShowPasswordModal(true);
+  };
+
+  const handleClosePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswordError("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    if (!passwordForm.current || !passwordForm.newPass || !passwordForm.confirm) {
+      setPasswordError("All fields are required.");
+      return;
+    }
+    if (passwordForm.newPass !== passwordForm.confirm) {
+      setPasswordError("New passwords do not match.");
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      const res = await fetch(`${API_BASE}/change_password/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user.id,
+          current_password: passwordForm.current,
+          new_password: passwordForm.newPass,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPasswordError(data.error || "Could not change password.");
+        return;
+      }
+      setShowPasswordModal(false);
+      setPasswordSuccess(true);
+      setTimeout(() => setPasswordSuccess(false), 4000);
+    } catch {
+      setPasswordError("Something went wrong.");
+    } finally {
+      setSavingPassword(false);
+    }
   };
 
   const handleSave = async () => {
@@ -180,6 +241,100 @@ export default function Userpage() {
 
   return (
     <div className="userpage">
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <div className="userpage__modalOverlay">
+          <div className="userpage__modal">
+            <h3 className="userpage__modalTitle">Change Password</h3>
+
+            <div className="userpage__section">
+              <label className="userpage__label">Current Password</label>
+              <div className="userpage__passwordFieldRow">
+                <input
+                  className="userpage__input"
+                  type={showCurrentPassword ? "text" : "password"}
+                  value={passwordForm.current}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                  placeholder="Current password"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="userpage__showBtn"
+                  onClick={() => setShowCurrentPassword((value) => !value)}
+                >
+                  {showCurrentPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <div className="userpage__section">
+              <label className="userpage__label">New Password</label>
+              <div className="userpage__passwordFieldRow">
+                <input
+                  className="userpage__input"
+                  type={showNewPassword ? "text" : "password"}
+                  value={passwordForm.newPass}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, newPass: e.target.value })}
+                  placeholder="New password"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="userpage__showBtn"
+                  onClick={() => setShowNewPassword((value) => !value)}
+                >
+                  {showNewPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <div className="userpage__section">
+              <label className="userpage__label">Confirm New Password</label>
+              <div className="userpage__passwordFieldRow">
+                <input
+                  className="userpage__input"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={passwordForm.confirm}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                  placeholder="Repeat new password"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="userpage__showBtn"
+                  onClick={() => setShowConfirmPassword((value) => !value)}
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            {passwordError && (
+              <p className="userpage__message userpage__message--error">{passwordError}</p>
+            )}
+
+            <div className="userpage__modalActions">
+              <span
+                className="userpage__modalCancelBtn"
+                onClick={handleClosePasswordModal}
+                role="button"
+                tabIndex={0}
+              >
+                Cancel
+              </span>
+              <span
+                className="userpage__modalSaveBtn"
+                onClick={savingPassword ? undefined : handleChangePassword}
+                role="button"
+                tabIndex={0}
+              >
+                {savingPassword ? "Saving..." : "Save"}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="userpage__container">
         <div className="userpage__header">
           <h1 className="userpage__title">My Profile</h1>
@@ -227,6 +382,21 @@ export default function Userpage() {
               }
               placeholder="Fortell litt om deg selv..."
             />
+          </div>
+
+          {/* Change Password */}
+          <div className="userpage__changePasswordRow">
+            <span
+              className="userpage__changePasswordBtn"
+              onClick={handleOpenPasswordModal}
+              role="button"
+              tabIndex={0}
+            >
+              Change Password
+            </span>
+            {passwordSuccess && (
+              <span className="userpage__passwordSuccessMsg">Password changed!</span>
+            )}
           </div>
 
           <hr className="userpage__separator" />

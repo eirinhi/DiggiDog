@@ -100,7 +100,10 @@ export default function App() {
 
       // Etter signup: gå tilbake til login
       setMode("login");
+      setUsername("");
+      setName("");
       setPassword("");
+      setConfirmPassword("");
       setMessage("User created! Please log in.");
 
     } catch (err) {

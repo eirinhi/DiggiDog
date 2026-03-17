@@ -11,7 +11,7 @@
     width: 60%;
     max-width: 420px;
     background: #ffffff;
-    border: 1px solid #2c4472;
+    border: 1px solid #0b1f3a;
     border-radius: 12px;
     padding: 22px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -22,7 +22,7 @@
     margin: 0 0 20px;
     font-size: 28px;
     text-align: center;
-    color: #2c4472;
+    color: #0b1f3a;
     letter-spacing: -0.5px;
 }
 
@@ -46,7 +46,7 @@ label {
     display: block;
     margin-bottom: 6px;
     font-weight: bold;
-    color: #2c4472;
+    color: #0b1f3a;
 }
 
 input, textarea {
@@ -60,7 +60,7 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #2b5cff;
+    border-color: #0b1f3a;
     box-shadow: 0 0 0 2px rgba(43, 92, 255, 0.2);
 }
 
@@ -76,8 +76,8 @@ button {
 }
 
 button:hover:not(:disabled) {
-    background-color: #2b5cff;
+    background-color: #0b1f3a;
     color: white;
-    border-color: #2b5cff;
+    border-color: #0b1f3a;
 }
 
