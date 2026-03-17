@@ -171,9 +171,17 @@ export default function Competition_page() {
     };
   }, [id]);
 
+  const canInteract = competition
+    ? new Date() >= new Date(competition.start_date)
+    : true;
+
   const handleLike = async (participantId) => {
     if (!loggedIn || !user) {
       alert("Please log in to like");
+      return;
+    }
+    if (!canInteract) {
+      alert("Likes are not available until the competition has started.");
       return;
     }
 
@@ -213,6 +221,10 @@ export default function Competition_page() {
   const openCommentModal = async (participant) => {
     if (!loggedIn || !user) {
       alert("Please log in to comment");
+      return;
+    }
+    if (!canInteract) {
+      alert("Comments are not available until the competition has started.");
       return;
     }
 
@@ -449,6 +461,11 @@ export default function Competition_page() {
       : userEnteredDogsCount >= 1 
         ? "Enter another dog" 
         : "Participate";
+  const now = new Date();
+  const startDate = new Date(competition.start_date);
+  const endDate = new Date(competition.end_date);
+  const isFinished = now > endDate;
+  const isNotStarted = now < startDate;
 
   return (
     <div className="competition-page">
@@ -487,6 +504,8 @@ export default function Competition_page() {
                 <span className="detail-value">{participants.length} / {competition.max_participants}</span>
               </div>
             </div>
+            {isFinished && <p className="competition-status finished">The competition has ended.</p>}
+            {isNotStarted && <p className="competition-status not-started">The competition has not started yet.</p>}
             <button
               className="participate-btn"
               onClick={handleParticipate}
