@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Heart, MessageCircle, Send, Trash2, X } from "lucide-react";
 import "./competition.css";
@@ -42,6 +42,27 @@ export default function Competition_page() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [commentsLoading, setCommentsLoading] = useState(false);
+
+  const sortedParticipants = useMemo(() => {
+    return [...participants].sort((a, b) => {
+      const likesA = likeCounts[a.id] || 0;
+      const likesB = likeCounts[b.id] || 0;
+
+      if (likesB !== likesA) {
+        return likesB - likesA;
+      }
+
+      const nameA = (a.dog?.name || "").toLowerCase();
+      const nameB = (b.dog?.name || "").toLowerCase();
+      const nameCompare = nameA.localeCompare(nameB);
+
+      if (nameCompare !== 0) {
+        return nameCompare;
+      }
+
+      return a.id - b.id;
+    });
+  }, [participants, likeCounts]);
 
   const checkUser = () => {
     const savedUser = localStorage.getItem("user");
@@ -523,7 +544,7 @@ export default function Competition_page() {
           <p className="no-dogs">No dogs have registered for this competition yet.</p>
         ) : (
           <div className="dogs-grid">
-            {participants.map((participant) => (
+            {sortedParticipants.map((participant) => (
               <div
                 key={participant.id}
                 className="dog-card"
